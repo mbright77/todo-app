@@ -59,4 +59,8 @@
   .header {
     align-items: center;
   }
+
+  .navRow {
+    width: 100%;
+  }
 }

@@ -47,6 +47,12 @@
   font-size: 14px;
   font-family: var(--font-sans);
   color: #655a52;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.chip:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 18px rgba(27, 27, 31, 0.08);
 }
 
 .panel {
@@ -76,5 +82,9 @@
   .header {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .navRow {
+    width: 100%;
   }
 }

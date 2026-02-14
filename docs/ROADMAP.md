@@ -68,6 +68,8 @@ working, testable increment of the application.
 
 **Goal:** Users can view tasks grouped by Today / Upcoming / Completed, and search by title.
 
+**Status:** Complete. Phase 3 deliverables are finished and verified.
+
 | #   | Deliverable                                    | Details                                                         |
 | --- | ---------------------------------------------- | --------------------------------------------------------------- |
 | 3.1 | Today page                                     | `pages/today/` -- tasks where `dueDate` is today                 |
@@ -86,6 +88,8 @@ working, testable increment of the application.
 ## Phase 4 -- Polish & PWA Hardening
 
 **Goal:** Production-quality PWA that is installable, fully offline, accessible, and responsive.
+
+**Status:** In progress. Phase 4 implementation underway.
 
 | #   | Deliverable                                    | Details                                                         |
 | --- | ---------------------------------------------- | --------------------------------------------------------------- |
