@@ -7,14 +7,16 @@ import { PlusIcon } from '../../../shared/ui/PlusIcon'
 export function CreateTaskForm() {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
+  const [dueDate, setDueDate] = useState('')
   const createTask = useTaskStore((state) => state.createTask)
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (!title.trim()) return
-    await createTask({ title, description })
+    await createTask({ title, description, dueDate: dueDate.trim() || undefined })
     setTitle('')
     setDescription('')
+    setDueDate('')
   }
 
   return (
@@ -41,6 +43,18 @@ export function CreateTaskForm() {
           value={description}
           onChange={(event) => setDescription(event.target.value)}
           placeholder="Optional description"
+        />
+      </div>
+      <div className={styles.field}>
+        <label className={styles.label} htmlFor="task-due-date">
+          Due date
+        </label>
+        <input
+          id="task-due-date"
+          className={styles.input}
+          type="date"
+          value={dueDate}
+          onChange={(event) => setDueDate(event.target.value)}
         />
       </div>
       <Button type="submit">

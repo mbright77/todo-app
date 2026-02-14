@@ -1,4 +1,6 @@
+import { TaskList } from '../../../entities/task/ui/TaskList'
 import { Layout } from '../../../shared/ui/Layout'
+import { TaskNav } from '../../../shared/ui/TaskNav'
 import styles from './UpcomingPage.module.css'
 
 export function UpcomingPage() {
@@ -12,9 +14,16 @@ export function UpcomingPage() {
         <div className={styles.chip}>Soon</div>
       </header>
 
+      <div className={styles.navRow}>
+        <TaskNav />
+      </div>
+
       <Layout>
         <section className={styles.panel}>
-          <p className={styles.placeholder}>Upcoming tasks will appear here.</p>
+          <TaskList
+            filterKey="upcoming"
+            emptyMessage="No upcoming tasks yet."
+          />
         </section>
       </Layout>
     </div>

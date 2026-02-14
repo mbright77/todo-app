@@ -1,0 +1,38 @@
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 6px;
+  border-radius: 999px;
+  border: 1px solid #e6dbd0;
+  background: #fef7f1;
+  width: fit-content;
+}
+
+.link {
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6e6258;
+  border: 1px solid transparent;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.link:hover {
+  background: #f6f2ec;
+}
+
+.link:focus-visible {
+  outline: 2px solid #1b1b1f;
+  outline-offset: 2px;
+}
+
+.linkActive {
+  background: #1b1b1f;
+  color: #f6f2ec;
+}

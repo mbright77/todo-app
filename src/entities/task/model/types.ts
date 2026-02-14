@@ -8,7 +8,7 @@ export type Task = {
   updatedAt: string
 }
 
-export type TaskFilterKey = 'all' | 'active' | 'completed'
+export type TaskFilterKey = 'all' | 'active' | 'completed' | 'today' | 'upcoming'
 
 export type TaskFilter = {
   key: TaskFilterKey

@@ -5,7 +5,9 @@ import { createId } from '../../../shared/lib/id'
 import { toIsoDate } from '../../../shared/lib/date'
 
 const FILTERS: TaskFilter[] = [
-  { key: 'all', label: 'My tasks' },
+  { key: 'all', label: 'All tasks' },
+  { key: 'today', label: 'Today' },
+  { key: 'upcoming', label: 'Upcoming' },
   { key: 'active', label: 'Active' },
   { key: 'completed', label: 'Completed' },
 ]

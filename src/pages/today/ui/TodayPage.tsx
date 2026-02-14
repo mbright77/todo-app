@@ -5,6 +5,7 @@ import { Layout } from '../../../shared/ui/Layout'
 import { IconButton } from '../../../shared/ui/IconButton'
 import { FilterIcon } from '../../../shared/ui/FilterIcon'
 import { TaskFilters } from '../../../features/search-tasks/ui/TaskFilters'
+import { TaskNav } from '../../../shared/ui/TaskNav'
 import styles from './TodayPage.module.css'
 
 export function TodayPage() {
@@ -22,12 +23,19 @@ export function TodayPage() {
         </IconButton>
       </header>
 
+      <div className={styles.navRow}>
+        <TaskNav />
+      </div>
+
       {isFilterModalOpen && <TaskFilters onClose={() => setIsFilterModalOpen(false)} />}
 
       <Layout>
         <section className={styles.panel}>
           <CreateTaskForm />
-          <TaskList />
+          <TaskList
+            filterKey="today"
+            emptyMessage="No tasks due today. Add one above."
+          />
         </section>
       </Layout>
     </div>

@@ -59,6 +59,20 @@ Use a consistent spacing scale based on multiples of 4px and 8px.
 -   **Main Panel:** Rounded corners (`24px` desktop, `18px` mobile), white background (`#ffffff`), subtle box shadow (`0 24px 50px rgba(27, 27, 31, 0.08)`).
 -   **Task Card:** Transparent background, with a bottom border (`#efe4da`) to separate items in a list.
 
+### Navigation
+-   **Tab Container (`TaskNav`):** Use Form Background color (`#fef7f1`), pill shape (`999px`), and a light border (`#e6dbd0`).
+-   **Tab Link:** Font size `14px`, weight `600`, with `0.08em` letter spacing. Use Secondary Text color (`#6e6258`).
+-   **Tab Active State:** Use Accent color (`#1b1b1f`) for background and corresponding light text (`#f6f2ec`).
+
+---
+
+## UX & Accessibility Rules
+
+1.  **Feedback:** All interactive elements (buttons, links, inputs) must have clear `:hover` and `:focus-visible` states. Focus states should be highly visible (e.g., solid outline).
+2.  **Consistency:** Always use the color, typography, and spacing tokens defined in this guide. Do not introduce new "magic numbers."
+3.  **Labels:** Ensure all form inputs have associated `<label>` tags. For icon-only buttons, provide an `aria-label`.
+4.  **Semantics:** Use semantic HTML elements (`<nav>`, `<button>`, `<main>`, etc.) to support assistive technologies.
+
 ---
 
 Refer to this guide when creating or modifying UI components to maintain a cohesive design language across the application.

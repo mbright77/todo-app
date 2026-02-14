@@ -40,4 +40,41 @@ describe('taskDb', () => {
     expect(completed).toHaveLength(1)
     expect(completed[0].title).toBe('Done')
   })
+
+  it('filters by today and upcoming', async () => {
+    const today = new Date()
+    const tomorrow = new Date(today)
+    tomorrow.setDate(today.getDate() + 1)
+
+    await taskDb.add(
+      buildTask({
+        title: 'Today task',
+        dueDate: today.toISOString().slice(0, 10),
+      })
+    )
+    await taskDb.add(
+      buildTask({
+        title: 'Upcoming task',
+        dueDate: tomorrow.toISOString().slice(0, 10),
+      })
+    )
+    await taskDb.add(buildTask({ title: 'No due date' }))
+
+    const todayTasks = await taskDb.getByFilter('today')
+    const upcomingTasks = await taskDb.getByFilter('upcoming')
+
+    expect(todayTasks).toHaveLength(1)
+    expect(todayTasks[0].title).toBe('Today task')
+    expect(upcomingTasks).toHaveLength(1)
+    expect(upcomingTasks[0].title).toBe('Upcoming task')
+  })
+
+  it('searches by title', async () => {
+    await taskDb.add(buildTask({ title: 'Write docs' }))
+    await taskDb.add(buildTask({ title: 'Review PR' }))
+
+    const results = await taskDb.searchByTitle('doc')
+    expect(results).toHaveLength(1)
+    expect(results[0].title).toBe('Write docs')
+  })
 })

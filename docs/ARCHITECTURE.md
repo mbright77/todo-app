@@ -197,6 +197,14 @@ This means Dexie is the **source of truth**. Zustand is used for ephemeral UI st
 
 ---
 
+## Behavior Notes
+
+- **Today list:** tasks with `dueDate` equal to today (date-only `YYYY-MM-DD` comparison).
+- **Upcoming list:** tasks with `dueDate` after today and `completed === false`.
+- **Completed list:** tasks with `completed === true`.
+- **Search:** case-insensitive match on `title` substring; empty query returns no results.
+- **Due dates:** stored as `YYYY-MM-DD` (from date inputs) and normalized before comparisons.
+
 ## Key Constraints
 
 - **No network requests.** No fetch, no XMLHttpRequest, no WebSocket.

@@ -45,7 +45,7 @@ working, testable increment of the application.
 
 **Goal:** Users can create, view, edit, complete, and delete tasks.
 
-**Status:** In progress. CRUD features are being wired into the Today page.
+**Status:** Complete. Phase 2 deliverables are finished and verified.
 
 | #   | Deliverable                                    | Details                                                         |
 | --- | ---------------------------------------------- | --------------------------------------------------------------- |

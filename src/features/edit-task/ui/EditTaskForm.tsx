@@ -10,6 +10,7 @@ type EditTaskFormProps = {
 export function EditTaskForm({ task }: EditTaskFormProps) {
   const [title, setTitle] = useState(task.title)
   const [description, setDescription] = useState(task.description ?? '')
+  const [dueDate, setDueDate] = useState(task.dueDate ?? '')
   const updateTask = useTaskStore((state) => state.updateTask)
 
   const onBlur = async () => {
@@ -17,13 +18,19 @@ export function EditTaskForm({ task }: EditTaskFormProps) {
     if (!trimmedTitle) {
       setTitle(task.title)
       setDescription(task.description ?? '')
+      setDueDate(task.dueDate ?? '')
       return
     }
 
-    if (trimmedTitle !== task.title || description !== (task.description ?? '')) {
+    if (
+      trimmedTitle !== task.title ||
+      description !== (task.description ?? '') ||
+      dueDate !== (task.dueDate ?? '')
+    ) {
       await updateTask(task.id, {
         title: trimmedTitle,
         description: description.trim() || null,
+        dueDate: dueDate.trim() || null,
       })
     }
   }
@@ -35,6 +42,7 @@ export function EditTaskForm({ task }: EditTaskFormProps) {
         value={title}
         onChange={(event) => setTitle(event.target.value)}
         onBlur={onBlur}
+        placeholder="Task title"
         aria-label="Task title"
       />
       <input
@@ -44,6 +52,14 @@ export function EditTaskForm({ task }: EditTaskFormProps) {
         onBlur={onBlur}
         aria-label="Task description"
         placeholder="Add details"
+      />
+      <input
+        className={styles.date}
+        type="date"
+        value={dueDate}
+        onChange={(event) => setDueDate(event.target.value)}
+        onBlur={onBlur}
+        aria-label="Task due date"
       />
     </div>
   )

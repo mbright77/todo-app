@@ -1,6 +1,6 @@
 .page {
   min-height: 100vh;
-  background: radial-gradient(circle at top, #f9f3ea 0%, #f1e9de 55%, #e5d8cc 100%);
+  background: radial-gradient(circle at top, #fef7f1 0%, #f6f2ec 55%, #efe7de 100%);
   color: #1b1b1f;
   display: flex;
   flex-direction: column;
@@ -16,6 +16,13 @@
   justify-content: space-between;
   gap: 16px;
   margin-bottom: 28px;
+}
+
+.navRow {
+  width: min(900px, 100%);
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 24px;
 }
 
 .kicker {
@@ -53,6 +60,52 @@
   gap: 16px;
 }
 
+.searchRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 16px;
+  border: 1px solid #e0d6cc;
+  background: #fef7f1;
+}
+
+.searchInput {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 6px 4px;
+}
+
+.searchInput:focus {
+  outline: 2px solid #1b1b1f;
+  outline-offset: 2px;
+}
+
+.clearButton {
+  border: none;
+  background: #1b1b1f;
+  color: #f6f2ec;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-family: var(--font-sans);
+}
+
+.clearButton:hover {
+  opacity: 0.9;
+}
+
+.results {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 .placeholder {
   margin: 0;
   font-size: 16px;
@@ -64,6 +117,11 @@
   .panel {
     padding: 20px;
     border-radius: 18px;
+  }
+
+  .searchRow {
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .header {

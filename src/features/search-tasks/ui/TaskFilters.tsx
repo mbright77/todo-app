@@ -8,11 +8,12 @@ type TaskFiltersProps = {
 
 export function TaskFilters({ onClose }: TaskFiltersProps) {
   const { filters, filter, setFilter } = useTaskStore()
+  const visibleFilters = filters.filter((item) => item.key === 'all' || item.key === 'active')
 
   return (
     <Modal onClose={onClose}>
       <ul className={styles.list}>
-        {filters.map((f) => (
+        {visibleFilters.map((f) => (
           <li key={f.key}>
             <button
               className={styles.button}
