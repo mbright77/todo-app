@@ -9,7 +9,7 @@ working, testable increment of the application.
 
 **Goal:** Project scaffolding, database layer, shared UI primitives, PWA shell.
 
-**Rules:** No automatic git commits or pushes are allowed unles explicitly asked for by the user. Each single commit must be asked for. 
+**Rules:** No automatic git commits or pushes are allowed unles explicitly asked for by the user. Each single commit must be asked for. All UI development should follow the [UI Design Guide](./DESIGN_GUIDE.md). 
 
 **Status:** Complete. Phase 1 deliverables are finished and verified.
 

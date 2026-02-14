@@ -18,7 +18,7 @@ Single user, single device. No accounts, no server, no cloud sync, no telemetry.
 | Local storage      | IndexedDB via Dexie.js  | Async, indexed, structured storage with a clean query API        |
 | Reactivity (DB)    | dexie-react-hooks       | `useLiveQuery` keeps UI in sync with IndexedDB automatically     |
 | PWA tooling        | vite-plugin-pwa         | Service worker generation, caching strategies, manifest          |
-| Styling            | CSS Modules             | Scoped styles, zero runtime, aligns with feature isolation       |
+| Styling            | CSS Modules             | Scoped styles, zero runtime, aligns with feature isolation. See [UI Design Guide](./DESIGN_GUIDE.md) |
 | Testing            | Vitest + Testing Library| Vite-native test runner, component and integration tests         |
 | Linting            | ESLint + Prettier       | Consistent code style                                            |
 

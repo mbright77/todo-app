@@ -1,27 +1,32 @@
+import { useState } from 'react'
 import { CreateTaskForm } from '../../../features/create-task/ui/CreateTaskForm'
-import { TaskFilters } from '../../../features/search-tasks/ui/TaskFilters'
 import { TaskList } from '../../../entities/task/ui/TaskList'
 import { Layout } from '../../../shared/ui/Layout'
-import { useTaskStore } from '../../../entities/task/model/store'
+import { IconButton } from '../../../shared/ui/IconButton'
+import { FilterIcon } from '../../../shared/ui/FilterIcon'
+import { TaskFilters } from '../../../features/search-tasks/ui/TaskFilters'
 import styles from './TodayPage.module.css'
 
 export function TodayPage() {
-  const filterLabel = useTaskStore((state) => state.filter.label)
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false)
 
   return (
     <div className={styles.page}>
       <header className={styles.header}>
         <div>
-          <p className={styles.kicker}>Today</p>
-          <h1 className={styles.title}>My Tasks</h1>
+          <p className={styles.kicker}>Your Tasks</p>
+          <h1 className={styles.title}>Today</h1>
         </div>
-        <div className={styles.chip}>{filterLabel}</div>
+        <IconButton onClick={() => setIsFilterModalOpen(true)}>
+          <FilterIcon />
+        </IconButton>
       </header>
+
+      {isFilterModalOpen && <TaskFilters onClose={() => setIsFilterModalOpen(false)} />}
 
       <Layout>
         <section className={styles.panel}>
           <CreateTaskForm />
-          <TaskFilters />
           <TaskList />
         </section>
       </Layout>

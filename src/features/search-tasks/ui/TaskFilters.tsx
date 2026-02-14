@@ -1,21 +1,32 @@
 import { useTaskStore } from '../../../entities/task/model/store'
+import { Modal } from '../../../shared/ui/Modal'
 import styles from './TaskFilters.module.css'
 
-export function TaskFilters() {
+type TaskFiltersProps = {
+  onClose: () => void
+}
+
+export function TaskFilters({ onClose }: TaskFiltersProps) {
   const { filters, filter, setFilter } = useTaskStore()
 
   return (
-    <div className={styles.filters}>
-      {filters.map((item) => (
-        <button
-          key={item.key}
-          className={item.key === filter.key ? styles.active : styles.button}
-          type="button"
-          onClick={() => setFilter(item)}
-        >
-          {item.label}
-        </button>
-      ))}
-    </div>
+    <Modal onClose={onClose}>
+      <ul className={styles.list}>
+        {filters.map((f) => (
+          <li key={f.key}>
+            <button
+              className={styles.button}
+              data-active={f.key === filter.key}
+              onClick={() => {
+                setFilter(f)
+                onClose()
+              }}
+            >
+              {f.label}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </Modal>
   )
 }

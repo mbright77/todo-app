@@ -1,4 +1,7 @@
 .button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   border: none;
   border-radius: 999px;
   padding: 12px 18px;
@@ -10,4 +13,9 @@
   text-transform: uppercase;
   cursor: pointer;
   font-family: var(--font-sans);
+}
+
+.button svg {
+  width: 16px;
+  height: 16px;
 }

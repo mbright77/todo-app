@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import styles from './CreateTaskForm.module.css'
 import { useTaskStore } from '../../../entities/task/model/store'
+import { Button } from '../../../shared/ui/Button'
+import { PlusIcon } from '../../../shared/ui/PlusIcon'
 
 export function CreateTaskForm() {
   const [title, setTitle] = useState('')
@@ -41,9 +43,10 @@ export function CreateTaskForm() {
           placeholder="Optional description"
         />
       </div>
-      <button className={styles.button} type="submit">
-        Create task
-      </button>
+      <Button type="submit">
+        <PlusIcon />
+        Add
+      </Button>
     </form>
   )
 }

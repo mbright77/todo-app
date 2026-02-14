@@ -1,13 +1,14 @@
 import styles from './CompleteCheckbox.module.css'
 import { useTaskStore } from '../../../entities/task/model/store'
+import type { ReactNode } from 'react'
 
 type CompleteCheckboxProps = {
   taskId: string
   completed: boolean
-  label: string
+  children: ReactNode
 }
 
-export function CompleteCheckbox({ taskId, completed, label }: CompleteCheckboxProps) {
+export function CompleteCheckbox({ taskId, completed, children }: CompleteCheckboxProps) {
   const toggleTask = useTaskStore((state) => state.toggleTask)
 
   return (
@@ -15,10 +16,10 @@ export function CompleteCheckbox({ taskId, completed, label }: CompleteCheckboxP
       <input
         type="checkbox"
         checked={completed}
-        aria-label={completed ? `Mark ${label} as active` : `Mark ${label} as completed`}
         onChange={(event) => toggleTask(taskId, event.target.checked)}
       />
       <span className={styles.indicator} aria-hidden="true" />
+      <span className={styles.label}>{children}</span>
     </label>
   )
 }
