@@ -18,7 +18,6 @@ type TaskState = {
   updateTask: (id: string, update: Partial<Task>) => Promise<void>
   toggleTask: (id: string, completed: boolean) => Promise<void>
   deleteTask: (id: string) => Promise<void>
-  seedDemoData: () => Promise<void>
 }
 
 const buildTask = (input: { title: string; description?: string; dueDate?: string }): Task => {
@@ -50,22 +49,5 @@ export const useTaskStore = create<TaskState>((set) => ({
   },
   deleteTask: async (id) => {
     await taskDb.remove(id)
-  },
-  seedDemoData: async () => {
-    const count = await taskDb.getAll()
-    if (count.length > 0) return
-
-    await taskDb.add(
-      buildTask({
-        title: 'Buy groceries',
-        description: 'Milk, fruit, and dinner ingredients',
-      })
-    )
-    await taskDb.add(
-      buildTask({
-        title: 'Plan weekend project',
-        description: 'Sketch layout and gather references',
-      })
-    )
   },
 }))

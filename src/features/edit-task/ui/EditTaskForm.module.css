@@ -1,0 +1,26 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.title {
+  border: none;
+  background: transparent;
+  font-size: 18px;
+  font-weight: 600;
+  font-family: var(--font-sans);
+}
+
+.description {
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  font-family: var(--font-sans);
+  color: #6e6258;
+}
+
+.title:focus,
+.description:focus {
+  outline: none;
+}

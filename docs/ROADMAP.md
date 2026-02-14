@@ -45,6 +45,8 @@ working, testable increment of the application.
 
 **Goal:** Users can create, view, edit, complete, and delete tasks.
 
+**Status:** In progress. CRUD features are being wired into the Today page.
+
 | #   | Deliverable                                    | Details                                                         |
 | --- | ---------------------------------------------- | --------------------------------------------------------------- |
 | 2.1 | Task data access layer                         | `entities/task/api/task.db.ts` -- add, get, update, remove      |
@@ -56,6 +58,7 @@ working, testable increment of the application.
 | 2.7 | Delete task feature                            | `features/delete-task/` -- delete action + Dexie remove           |
 | 2.8 | Zustand UI state store                         | `entities/task/model/store.ts` -- active filter, transient state  |
 | 2.9 | Unit & integration tests                       | Vitest tests for DB layer, store actions, and components          |
+| 2.10 | Today page wiring                             | Render CRUD UI on `pages/today/`                                  |
 
 **Exit criteria:** Full CRUD lifecycle works. Tasks persist across page reloads via IndexedDB.
 
