@@ -10,8 +10,7 @@ export const taskDb = {
 
     const completed = filter === 'completed'
     const list = await db.tasks
-      .where('completed')
-      .equals(completed)
+      .filter((task) => task.completed === completed)
       .toArray()
 
     return list.sort((a, b) => b.createdAt.localeCompare(a.createdAt))
