@@ -1,7 +1,6 @@
+import { Box, Button, Card, CardContent, Container, Typography } from '@mui/material'
 import type { PropsWithChildren } from 'react'
 import { Component } from 'react'
-import { Button } from './Button'
-import styles from './ErrorBoundary.module.css'
 
 type ErrorBoundaryState = {
   hasError: boolean
@@ -29,19 +28,40 @@ export class ErrorBoundary extends Component<PropsWithChildren, ErrorBoundarySta
     }
 
     return (
-      <main className={styles.page}>
-        <section className={styles.panel} role="alert">
-          <p className={styles.kicker}>Something went wrong</p>
-          <h1 className={styles.title}>We hit a snag.</h1>
-          <p className={styles.body}>
-            Your tasks are safe on this device. Reload the app to try again.
-          </p>
-          <p className={styles.detail}>{this.state.message}</p>
-          <div className={styles.actions}>
-            <Button onClick={this.handleReload}>Reload app</Button>
-          </div>
-        </section>
-      </main>
+      <Box
+        component="main"
+        sx={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          p: 3,
+        }}
+      >
+        <Container maxWidth="sm">
+          <Card variant="outlined" role="alert">
+            <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <Typography variant="overline" color="text.secondary">
+                Something went wrong
+              </Typography>
+              <Typography variant="h4" component="h1">
+                We hit a snag.
+              </Typography>
+              <Typography variant="body1" color="text.secondary">
+                Your tasks are safe on this device. Reload the app to try again.
+              </Typography>
+              <Typography variant="caption" color="error">
+                {this.state.message}
+              </Typography>
+              <Box sx={{ mt: 1 }}>
+                <Button variant="contained" onClick={this.handleReload}>
+                  Reload app
+                </Button>
+              </Box>
+            </CardContent>
+          </Card>
+        </Container>
+      </Box>
     )
   }
 }

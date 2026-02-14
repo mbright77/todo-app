@@ -1,5 +1,5 @@
+import { Dialog, DialogContent } from '@mui/material'
 import type { ReactNode } from 'react'
-import styles from './Modal.module.css'
 
 type ModalProps = {
   children: ReactNode
@@ -8,10 +8,10 @@ type ModalProps = {
 
 export function Modal({ children, onClose }: ModalProps) {
   return (
-    <div className={styles.backdrop} onClick={onClose}>
-      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+    <Dialog open={true} onClose={onClose}>
+      <DialogContent>
         {children}
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   )
 }

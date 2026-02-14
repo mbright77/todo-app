@@ -1,6 +1,5 @@
 import { useTaskStore } from '../../../entities/task/model/store'
-import { Modal } from '../../../shared/ui/Modal'
-import styles from './TaskFilters.module.css'
+import { Dialog, DialogTitle, List, ListItemButton, ListItemText } from '@mui/material'
 
 type TaskFiltersProps = {
   onClose: () => void
@@ -11,23 +10,22 @@ export function TaskFilters({ onClose }: TaskFiltersProps) {
   const visibleFilters = filters.filter((item) => item.key === 'all' || item.key === 'active')
 
   return (
-    <Modal onClose={onClose}>
-      <ul className={styles.list}>
+    <Dialog open={true} onClose={onClose} fullWidth maxWidth="xs">
+      <DialogTitle>Filter Tasks</DialogTitle>
+      <List sx={{ pt: 0 }}>
         {visibleFilters.map((f) => (
-          <li key={f.key}>
-            <button
-              className={styles.button}
-              data-active={f.key === filter.key}
-              onClick={() => {
-                setFilter(f)
-                onClose()
-              }}
-            >
-              {f.label}
-            </button>
-          </li>
+          <ListItemButton
+            key={f.key}
+            selected={f.key === filter.key}
+            onClick={() => {
+              setFilter(f)
+              onClose()
+            }}
+          >
+            <ListItemText primary={f.label} />
+          </ListItemButton>
         ))}
-      </ul>
-    </Modal>
+      </List>
+    </Dialog>
   )
 }

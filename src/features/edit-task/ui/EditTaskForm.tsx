@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import styles from './EditTaskForm.module.css'
 import type { Task } from '../../../entities/task/model/types'
 import { useTaskStore } from '../../../entities/task/model/store'
+import { TextField, Box } from '@mui/material'
 
 type EditTaskFormProps = {
   task: Task
@@ -36,31 +36,63 @@ export function EditTaskForm({ task }: EditTaskFormProps) {
   }
 
   return (
-    <div className={styles.form}>
-      <input
-        className={styles.title}
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, flex: 1, minWidth: 0 }}>
+      <TextField
+        label="Task title"
+        variant="standard"
+        fullWidth
         value={title}
         onChange={(event) => setTitle(event.target.value)}
         onBlur={onBlur}
         placeholder="Task title"
-        aria-label="Task title"
+        slotProps={{
+          input: {
+            disableUnderline: true,
+            sx: { fontWeight: 600, fontSize: '1.125rem' }
+          },
+          inputLabel: {
+            shrink: true,
+            sx: { clipPath: 'inset(50%)', height: 1, overflow: 'hidden', position: 'absolute', whiteSpace: 'nowrap', width: 1 }
+          }
+        }}
       />
-      <input
-        className={styles.description}
+      <TextField
+        label="Notes"
+        variant="standard"
+        fullWidth
+        multiline
         value={description}
         onChange={(event) => setDescription(event.target.value)}
         onBlur={onBlur}
-        aria-label="Task description"
         placeholder="Add details"
+        slotProps={{
+          input: {
+            disableUnderline: true,
+            sx: { fontSize: '0.875rem', color: 'text.secondary' }
+          },
+          inputLabel: {
+            shrink: true,
+            sx: { clipPath: 'inset(50%)', height: 1, overflow: 'hidden', position: 'absolute', whiteSpace: 'nowrap', width: 1 }
+          }
+        }}
       />
-      <input
-        className={styles.date}
+      <TextField
+        label="Due date"
         type="date"
+        variant="standard"
         value={dueDate}
         onChange={(event) => setDueDate(event.target.value)}
         onBlur={onBlur}
-        aria-label="Task due date"
+        slotProps={{
+          input: {
+            sx: { fontSize: '0.75rem', color: 'text.secondary' }
+          },
+          inputLabel: {
+            shrink: true,
+            sx: { clipPath: 'inset(50%)', height: 1, overflow: 'hidden', position: 'absolute', whiteSpace: 'nowrap', width: 1 }
+          }
+        }}
       />
-    </div>
+    </Box>
   )
 }

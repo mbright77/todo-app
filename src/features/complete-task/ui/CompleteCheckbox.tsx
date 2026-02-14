@@ -1,5 +1,5 @@
-import styles from './CompleteCheckbox.module.css'
 import { useTaskStore } from '../../../entities/task/model/store'
+import { Checkbox } from '@mui/material'
 
 type CompleteCheckboxProps = {
   taskId: string
@@ -12,14 +12,10 @@ export function CompleteCheckbox({ taskId, completed, label }: CompleteCheckboxP
   const ariaLabel = label ?? 'task'
 
   return (
-    <label className={styles.checkbox}>
-      <input
-        type="checkbox"
-        checked={completed}
-        aria-label={`Mark ${ariaLabel} as completed`}
-        onChange={(event) => toggleTask(taskId, event.target.checked)}
-      />
-      <span className={styles.indicator} aria-hidden="true" />
-    </label>
+    <Checkbox
+      checked={completed}
+      onChange={(event) => toggleTask(taskId, event.target.checked)}
+      inputProps={{ 'aria-label': `Mark ${ariaLabel} as completed` }}
+    />
   )
 }

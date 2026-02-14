@@ -1,6 +1,6 @@
 import { useTaskStore } from '../../../entities/task/model/store'
 import { IconButton } from '../../../shared/ui/IconButton'
-import { TrashIcon } from '../../../shared/ui/TrashIcon'
+import DeleteIcon from '@mui/icons-material/Delete'
 
 type DeleteButtonProps = {
   taskId: string
@@ -11,7 +11,7 @@ export function DeleteButton({ taskId }: DeleteButtonProps) {
 
   return (
     <IconButton onClick={() => deleteTask(taskId)} aria-label="Delete task">
-      <TrashIcon />
+      <DeleteIcon />
     </IconButton>
   )
 }

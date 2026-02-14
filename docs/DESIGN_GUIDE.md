@@ -1,78 +1,53 @@
-# UI Design Guide
+# UI Design Guide (Material Design 3)
 
-This document outlines the UI design guidelines for the application, based on the provided mockup (`todo_design.png`). Following these guidelines will ensure a consistent and visually appealing user interface.
+This document outlines the UI design guidelines for the application, following Material Design 3 (MD3) standards implemented via MUI v7.
 
-## Color Palette
+## Theme & Color Palette
 
--   **Primary Background:** `radial-gradient(circle at top, #fef7f1 0%, #f6f2ec 55%, #efe7de 100%)`
--   **Panel Background:** `#ffffff`
--   **Form Background:** `#fef7f1`
--   **Primary Text:** `#1b1b1f`
--   **Secondary Text:** `#6e6258`
--   **Subtle Text / Labels:** `#9a8776`
--   **Accent / Primary Button:** `#1b1b1f` (background), `#f6f2ec` (text)
--   **Borders:** `#e0d6cc` (standard), `#e6dbd0` (light)
+The app uses MUI's `colorSchemes` (light/dark) with MD3-approximated tokens.
+
+### Light Scheme
+- **Primary:** `#6750A4` (Deep Purple)
+- **Secondary:** `#625B71`
+- **Background:** `#FFFBFE`
+- **Surface:** `#FFFBFE`
+- **Error:** `#B3261E`
+
+### Dark Scheme
+- **Primary:** `#D0BCFF`
+- **Secondary:** `#CCC2DC`
+- **Background:** `#1C1B1F`
+- **Surface:** `#1C1B1F`
 
 ## Typography
 
--   **Display Font Family:** `var(--font-display)` - A clean, modern sans-serif font for headings.
--   **Sans-serif Font Family:** `var(--font-sans)` - A readable sans-serif for body text, inputs, and buttons.
+The app uses the **Roboto** font family bundled via `@fontsource/roboto`.
 
-### Font Sizes
+### Type Scale
+- **Display (h1-h3):** Roboto 400. Used for page headings and hero elements.
+- **Body (body1-body2):** Roboto 400. Used for task descriptions and general text.
+- **Overline:** Roboto 400. Used for kickers and category labels.
+- **Button:** Roboto 600. Used for all interactive triggers.
 
--   **Page Title (`h1`):** `clamp(32px, 4vw, 44px)`
--   **Kicker/Eyebrow:** `12px` (with `0.2em` letter spacing and uppercase)
--   **Body/Input:** `16px`
--   **Button:** `14px`
--   **Label:** `12px` (with `0.18em` letter spacing and uppercase)
+## Components & Shapes
 
-### Font Weights
+### Shapes
+- **Standard Radius:** `12px` (Cards, TextFields)
+- **Large Radius:** `16px` (Panels, Paper)
+- **Dialog Radius:** `28px`
+- **Pill Radius:** `999px` (Buttons, Chips, Tabs)
 
--   **Page Title:** `600`
--   **Buttons:** `600`
--   **Regular:** `400`
-
-## Spacing
-
-Use a consistent spacing scale based on multiples of 4px and 8px.
-
--   **Gaps between sections:** `24px`, `28px`
--   **Padding within panels:** `28px` (desktop), `20px` (mobile)
--   **Gaps between form elements:** `16px`
--   **Padding within form elements:** `12px 14px`
-
-## Component Styles
-
-### Buttons
-
--   **Primary Button:** Rounded pill shape (`999px`), solid dark background (`#1b1b1f`), light text (`#f6f2ec`).
--   **Icon Button:** No border, transparent background.
-
-### Forms & Inputs
-
--   **Form Container:** Dashed border (`#e0d6cc`), light background (`#fef7f1`), rounded corners (`20px`).
--   **Input Fields:** Solid border (`#e0d6cc`), white background, rounded corners (`12px`).
--   **Input Focus:** `2px` solid outline (`#1b1b1f`), transparent border.
-
-### Panels/Cards
-
--   **Main Panel:** Rounded corners (`24px` desktop, `18px` mobile), white background (`#ffffff`), subtle box shadow (`0 24px 50px rgba(27, 27, 31, 0.08)`).
--   **Task Card:** Transparent background, with a bottom border (`#efe4da`) to separate items in a list.
-
-### Navigation
--   **Tab Container (`TaskNav`):** Use Form Background color (`#fef7f1`), pill shape (`999px`), and a light border (`#e6dbd0`).
--   **Tab Link:** Font size `14px`, weight `600`, with `0.08em` letter spacing. Use Secondary Text color (`#6e6258`).
--   **Tab Active State:** Use Accent color (`#1b1b1f`) for background and corresponding light text (`#f6f2ec`).
-
----
+### Surface Elevation
+The app uses **Tonal Elevation** where possible (surface color tinting) combined with subtle shadows. Outlined variants are preferred for a clean, modern look.
 
 ## UX & Accessibility Rules
 
-1.  **Feedback:** All interactive elements (buttons, links, inputs) must have clear `:hover` and `:focus-visible` states. Focus states should be highly visible (e.g., solid outline).
-2.  **Consistency:** Always use the color, typography, and spacing tokens defined in this guide. Do not introduce new "magic numbers."
-3.  **Labels:** Ensure all form inputs have associated `<label>` tags. For icon-only buttons, provide an `aria-label`.
-4.  **Semantics:** Use semantic HTML elements (`<nav>`, `<button>`, `<main>`, etc.) to support assistive technologies.
+1. **Focus Management:** All dialogs use focus trapping. The "Add Task" disclosure panel returns focus to the toggle button on close.
+2. **Keyboard Navigation:** Every action (Add, Edit, Delete, Filter) is accessible via keyboard. Escape key closes dialogs and the disclosure panel.
+3. **Labels:** All form inputs use MUI `TextField` labels or explicit `aria-label` for icon-only buttons.
+4. **Motion:** Use MUI `Collapse` and `Fade` for entry/exit animations. All animations respect the `prefers-reduced-motion` system setting.
+5. **Dark Mode:** Supports system-level and manual dark mode toggling via the `AppBar` toggle.
 
 ---
 
-Refer to this guide when creating or modifying UI components to maintain a cohesive design language across the application.
+Refer to `src/app/theme.ts` for the programmatic implementation of these guidelines.

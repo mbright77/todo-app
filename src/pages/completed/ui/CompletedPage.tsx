@@ -1,31 +1,27 @@
 import { TaskList } from '../../../entities/task/ui/TaskList'
-import { Layout } from '../../../shared/ui/Layout'
-import { TaskNav } from '../../../shared/ui/TaskNav'
-import styles from './CompletedPage.module.css'
+import { Typography, Box, Paper, Chip } from '@mui/material'
 
 export function CompletedPage() {
   return (
-    <div className={styles.page}>
-      <header className={styles.header}>
-        <div>
-          <p className={styles.kicker}>Completed</p>
-          <h1 className={styles.title}>Finished Tasks</h1>
-        </div>
-        <div className={styles.chip}>Done</div>
-      </header>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box>
+          <Typography variant="overline" color="text.secondary" sx={{ letterSpacing: 2 }}>
+            Completed
+          </Typography>
+          <Typography variant="h4" component="h1" sx={{ fontWeight: 600 }}>
+            Finished Tasks
+          </Typography>
+        </Box>
+        <Chip label="Done" variant="outlined" color="success" />
+      </Box>
 
-      <div className={styles.navRow}>
-        <TaskNav />
-      </div>
-
-      <Layout>
-        <section className={styles.panel}>
-          <TaskList
-            filterKey="completed"
-            emptyMessage="No completed tasks yet."
-          />
-        </section>
-      </Layout>
-    </div>
+      <Paper variant="outlined" sx={{ p: { xs: 2, sm: 3 }, borderRadius: 4 }}>
+        <TaskList
+          filterKey="completed"
+          emptyMessage="No completed tasks yet."
+        />
+      </Paper>
+    </Box>
   )
 }

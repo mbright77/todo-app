@@ -2,6 +2,7 @@ import { describe, expect, it, beforeEach } from 'vitest'
 import { taskDb } from './task.db'
 import { db } from '../../../shared/lib/db'
 import type { Task } from '../model/types'
+import { toDateKey } from '../../../shared/lib/date'
 
 const buildTask = (overrides: Partial<Task> = {}): Task => ({
   id: overrides.id ?? 'task-' + Math.random().toString(36).slice(2, 10),
@@ -49,13 +50,13 @@ describe('taskDb', () => {
     await taskDb.add(
       buildTask({
         title: 'Today task',
-        dueDate: today.toISOString().slice(0, 10),
+        dueDate: toDateKey(today),
       })
     )
     await taskDb.add(
       buildTask({
         title: 'Upcoming task',
-        dueDate: tomorrow.toISOString().slice(0, 10),
+        dueDate: toDateKey(tomorrow),
       })
     )
     await taskDb.add(buildTask({ title: 'No due date' }))

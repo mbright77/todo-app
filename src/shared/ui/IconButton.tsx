@@ -1,8 +1,5 @@
-import type { ButtonHTMLAttributes } from 'react'
-import styles from './IconButton.module.css'
+import { IconButton as MuiIconButton, type IconButtonProps } from '@mui/material'
 
-type IconButtonProps = ButtonHTMLAttributes<HTMLButtonElement>
-
-export function IconButton(props: IconButtonProps) {
-  return <button className={styles.button} {...props} />
+export function IconButton({ children, ...props }: IconButtonProps) {
+  return <MuiIconButton {...props}>{children}</MuiIconButton>
 }

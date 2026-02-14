@@ -1,8 +1,5 @@
-import type { ButtonHTMLAttributes } from 'react'
-import styles from './Button.module.css'
+import { Button as MuiButton, type ButtonProps } from '@mui/material'
 
-type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement>
-
-export function Button(props: ButtonProps) {
-  return <button className={styles.button} {...props} />
+export function Button({ children, ...props }: ButtonProps) {
+  return <MuiButton variant="contained" {...props}>{children}</MuiButton>
 }

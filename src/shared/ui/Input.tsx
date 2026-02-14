@@ -1,9 +1,5 @@
-import type { InputHTMLAttributes } from 'react'
-import styles from './Input.module.css'
+import { TextField, type TextFieldProps } from '@mui/material'
 
-type InputProps = InputHTMLAttributes<HTMLInputElement>
-
-export function Input({ className, ...props }: InputProps) {
-  const mergedClassName = [styles.input, className].filter(Boolean).join(' ')
-  return <input className={mergedClassName} {...props} />
+export function Input(props: TextFieldProps) {
+  return <TextField variant="outlined" fullWidth {...props} />
 }

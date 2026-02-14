@@ -1,5 +1,5 @@
-import { NavLink } from 'react-router-dom'
-import styles from './TaskNav.module.css'
+import { Tabs, Tab, Box } from '@mui/material'
+import { Link, useLocation } from 'react-router-dom'
 
 const LINKS = [
   { to: '/today', label: 'Today' },
@@ -9,19 +9,23 @@ const LINKS = [
 ]
 
 export function TaskNav() {
+  const { pathname } = useLocation()
+  
+  const activeTab = LINKS.findIndex(link => link.to === pathname)
+  const value = activeTab === -1 ? 0 : activeTab
+
   return (
-    <nav className={styles.nav} aria-label="Task views">
-      {LINKS.map((link) => (
-        <NavLink
-          key={link.to}
-          to={link.to}
-          className={({ isActive }) =>
-            [styles.link, isActive ? styles.linkActive : ''].filter(Boolean).join(' ')
-          }
-        >
-          {link.label}
-        </NavLink>
-      ))}
-    </nav>
+    <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
+      <Tabs value={value} aria-label="Task views">
+        {LINKS.map((link) => (
+          <Tab 
+            key={link.to} 
+            label={link.label} 
+            component={Link} 
+            to={link.to} 
+          />
+        ))}
+      </Tabs>
+    </Box>
   )
 }

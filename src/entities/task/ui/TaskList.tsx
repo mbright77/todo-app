@@ -3,7 +3,8 @@ import { taskDb } from '../api/task.db'
 import { TaskCard } from './TaskCard'
 import { useTaskStore } from '../model/store'
 import type { TaskFilterKey } from '../model/types'
-import styles from './TaskList.module.css'
+import { Box, Typography, Stack, CircularProgress, Collapse } from '@mui/material'
+import { TransitionGroup } from 'react-transition-group'
 
 type TaskListProps = {
   filterKey?: TaskFilterKey
@@ -16,18 +17,35 @@ export function TaskList({ filterKey, emptyMessage }: TaskListProps) {
   const tasks = useLiveQuery(() => taskDb.getByFilter(activeFilter), [activeFilter])
 
   if (!tasks) {
-    return <p className={styles.empty}>Loading tasks...</p>
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+        <CircularProgress size={32} />
+      </Box>
+    )
   }
 
   if (tasks.length === 0) {
-    return <p className={styles.empty}>{emptyMessage ?? 'No tasks yet. Add one above.'}</p>
+    return (
+      <Box sx={{ py: 6, px: 2, textAlign: 'center', bgcolor: 'action.hover', borderRadius: 4 }}>
+        <Typography variant="body1" color="text.secondary">
+          {emptyMessage ?? 'No tasks yet. Add one above.'}
+        </Typography>
+      </Box>
+    )
   }
 
   return (
-    <div className={styles.list}>
-      {tasks.map((task) => (
-        <TaskCard key={task.id} task={task} />
-      ))}
-    </div>
+    <Stack spacing={0}>
+      <TransitionGroup component={null}>
+        {tasks.map((task) => (
+          <Collapse key={task.id}>
+            <Box sx={{ pb: 1 }}>
+              <TaskCard task={task} />
+            </Box>
+          </Collapse>
+        ))}
+      </TransitionGroup>
+    </Stack>
   )
 }
+
