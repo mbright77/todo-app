@@ -3,7 +3,11 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 import { configDefaults } from 'vitest/config'
 
+const rawBase = process.env.BASE_URL ?? '/'
+const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`
+
 export default defineConfig({
+  base,
   plugins: [
     react(),
     VitePWA({
@@ -11,7 +15,7 @@ export default defineConfig({
       includeAssets: ['favicon.svg', 'pwa-icon.svg'],
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
-        navigateFallback: '/index.html',
+        navigateFallback: `${base}index.html`,
         runtimeCaching: [
           {
             urlPattern: ({ request }) => request.destination === 'image',
@@ -58,10 +62,11 @@ export default defineConfig({
         theme_color: '#1b1b1f',
         background_color: '#f6f2ec',
         display: 'standalone',
-        start_url: '/',
+        start_url: base,
+        scope: base,
         icons: [
           {
-            src: '/pwa-icon.svg',
+            src: `${base}pwa-icon.svg`,
             sizes: '512x512',
             type: 'image/svg+xml',
             purpose: 'any maskable',
