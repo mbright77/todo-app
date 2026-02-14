@@ -1,0 +1,27 @@
+.filters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.button {
+  border-radius: 999px;
+  border: 1px solid #e6dbd0;
+  background: #ffffff;
+  padding: 8px 14px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  color: #6e6258;
+}
+
+.active {
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: #1b1b1f;
+  padding: 8px 14px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  color: #f6f2ec;
+}

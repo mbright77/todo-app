@@ -9,6 +9,8 @@ working, testable increment of the application.
 
 **Goal:** Project scaffolding, database layer, shared UI primitives, PWA shell.
 
+**Status:** In progress. Most deliverables are complete; remaining item is router wiring for placeholder pages.
+
 | #   | Deliverable                                    | Details                                                         |
 | --- | ---------------------------------------------- | --------------------------------------------------------------- |
 | 1.1 | Vite + React + TypeScript scaffold             | `npm create vite@latest`, strict TS config, ESLint, Prettier    |
@@ -21,6 +23,22 @@ working, testable increment of the application.
 | 1.8 | Global styles & design tokens                  | CSS reset, colour palette, spacing scale, typography             |
 
 **Exit criteria:** App runs in dev, installs as a PWA, shows placeholder pages, DB is initialised on first visit.
+
+### Current state (session handoff)
+
+- Vite React TS scaffold is in place with ESLint and TS configs.
+- PWA configured in `vite.config.ts` using `vite-plugin-pwa@1.2.0`.
+- Feature Sliced folder structure created under `src/`.
+- IndexedDB set up with Dexie (`src/shared/lib/db.ts`) and Task model (`src/entities/task/model/types.ts`).
+- Basic CRUD UI wired: create form, task list, inline edit, toggle complete, delete.
+- Filter chips (`all`, `active`, `completed`) with Zustand store (`src/entities/task/model/store.ts`).
+- Placeholder page components exist in `src/pages/*/ui/*.tsx` but are not routed.
+
+#### Issues to resume
+
+- No router is wired yet (Phase 1 item 1.6). Add React Router and routes for Today/Upcoming/Completed/Search.
+- PWA icons are SVG-only; PNG icons are not generated. Decide whether to keep SVG or generate PNG assets.
+- `npm run dev` works; dev server uses port 5174 if 5173 is busy.
 
 ---
 
