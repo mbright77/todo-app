@@ -13,6 +13,10 @@ export const theme = createTheme({
         secondary: {
           main: '#625B71',
         },
+        text: {
+          primary: '#1C1B1F',
+          secondary: '#49454F',
+        },
         background: {
           default: '#FFFBFE',
           paper: '#FFFBFE',
@@ -20,6 +24,7 @@ export const theme = createTheme({
         error: {
           main: '#B3261E',
         },
+        divider: '#CAC4D0',
       },
     },
     dark: {
@@ -30,10 +35,18 @@ export const theme = createTheme({
         secondary: {
           main: '#CCC2DC',
         },
+        text: {
+          primary: '#E6E1E5',
+          secondary: '#938F99',
+        },
         background: {
           default: '#1C1B1F',
           paper: '#1C1B1F',
         },
+        error: {
+          main: '#F2B8B5',
+        },
+        divider: '#49454F',
       },
     },
   },

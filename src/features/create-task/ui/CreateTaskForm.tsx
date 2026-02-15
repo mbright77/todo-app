@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useTaskStore } from '../../../entities/task/model/store'
-import { Button as MuiButton, TextField, Box, Collapse, Paper } from '@mui/material'
+import { TextField, Box, Collapse, Paper } from '@mui/material'
 import { Button } from '../../../shared/ui/Button'
 import AddIcon from '@mui/icons-material/Add'
 
@@ -63,8 +63,9 @@ export function CreateTaskForm({ initiallyExpanded = false }: { initiallyExpande
           sx={{
             p: 2,
             borderRadius: 3,
-            bgcolor: (theme) => (theme.palette.mode === 'light' ? 'grey.50' : 'background.paper'),
+            bgcolor: 'action.hover',
             borderStyle: 'dashed',
+            borderColor: 'divider',
           }}
         >
           <Box component="form" id="create-task-form" onSubmit={onSubmit} sx={{ display: 'grid', gap: 2 }}>
@@ -78,6 +79,11 @@ export function CreateTaskForm({ initiallyExpanded = false }: { initiallyExpande
               onChange={(event) => setTitle(event.target.value)}
               placeholder="Add a task"
               required
+              slotProps={{
+                input: {
+                  sx: { bgcolor: 'background.paper' }
+                }
+              }}
             />
             <TextField
               label="Notes"
@@ -89,6 +95,11 @@ export function CreateTaskForm({ initiallyExpanded = false }: { initiallyExpande
               placeholder="Optional description"
               multiline
               rows={2}
+              slotProps={{
+                input: {
+                  sx: { bgcolor: 'background.paper' }
+                }
+              }}
             />
             <TextField
               label="Due date"
@@ -102,15 +113,18 @@ export function CreateTaskForm({ initiallyExpanded = false }: { initiallyExpande
                 inputLabel: {
                   shrink: true,
                 },
+                input: {
+                  sx: { bgcolor: 'background.paper' }
+                }
               }}
             />
             <Box sx={{ display: 'flex', gap: 1 }}>
-              <Button type="submit" variant="contained" startIcon={<AddIcon />}>
+              <Button type="submit" startIcon={<AddIcon />}>
                 Add
               </Button>
-              <MuiButton onClick={handleCancel}>
+              <Button variant="text" onClick={handleCancel}>
                 Cancel
-              </MuiButton>
+              </Button>
             </Box>
           </Box>
         </Paper>

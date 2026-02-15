@@ -25,8 +25,17 @@ export function AppLayout() {
   const resolvedMode = mode === 'system' ? systemMode : mode
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: 'background.default', color: 'text.primary' }}>
-      <AppBar position="static" elevation={0} color="default" sx={{ borderBottom: 1, borderColor: 'divider' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: 'background.default' }}>
+      <AppBar 
+        position="static" 
+        elevation={0} 
+        sx={{ 
+          bgcolor: 'background.paper', 
+          color: 'text.primary',
+          borderBottom: '1px solid', 
+          borderColor: 'divider' 
+        }}
+      >
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 700 }}>
             Todo App
