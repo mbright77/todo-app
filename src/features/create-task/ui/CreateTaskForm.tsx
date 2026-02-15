@@ -4,7 +4,15 @@ import { TextField, Box, Collapse, Paper } from '@mui/material'
 import { Button } from '../../../shared/ui/Button'
 import AddIcon from '@mui/icons-material/Add'
 
-export function CreateTaskForm({ initiallyExpanded = false }: { initiallyExpanded?: boolean }) {
+export function CreateTaskForm({ 
+  initiallyExpanded = false,
+  onSuccess,
+  onCancel 
+}: { 
+  initiallyExpanded?: boolean,
+  onSuccess?: () => void,
+  onCancel?: () => void
+}) {
   const [isExpanded, setIsExpanded] = useState(initiallyExpanded)
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
@@ -33,12 +41,15 @@ export function CreateTaskForm({ initiallyExpanded = false }: { initiallyExpande
     setDueDate('')
     setIsExpanded(false)
     toggleButtonRef.current?.focus()
+    onSuccess?.()
   }
 
   const handleCancel = () => {
     setIsExpanded(false)
     toggleButtonRef.current?.focus()
+    onCancel?.()
   }
+
 
   return (
     <Box>

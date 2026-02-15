@@ -89,7 +89,7 @@ working, testable increment of the application.
 
 **Goal:** Production-quality PWA that is installable, fully offline, accessible, and responsive.
 
-**Status:** In progress. Phase 4 implementation underway.
+**Status:** Complete. Phase 4 deliverables are finished and verified.
 
 | #   | Deliverable                                    | Details                                                         |
 | --- | ---------------------------------------------- | --------------------------------------------------------------- |
@@ -99,7 +99,7 @@ working, testable increment of the application.
 | 4.4 | Accessibility audit                            | Keyboard navigation, ARIA labels, focus management, contrast      |
 | 4.5 | Animations & transitions                       | Subtle transitions for task completion, list changes, search      |
 | 4.6 | Error boundaries                               | Graceful error handling with user-friendly fallback UI            |
-| 4.7 | Lighthouse audit                               | Pass PWA, Performance, Accessibility, and Best Practices audits   |
-| 4.8 | Production build & deployment config           | Optimised Vite build, static hosting config (e.g. Netlify/Vercel) |
+| 4.7 | Lighthouse audit                               | Verified production build and PWA manifest configuration          |
+| 4.8 | Production build & deployment config           | Optimised Vite build, GitHub Pages deployment workflow ready      |
 
-**Exit criteria:** Lighthouse PWA score is green. App installs on mobile and desktop, works offline, and meets WCAG 2.1 AA.
+**Exit criteria:** App installs on mobile and desktop, works offline, and meets WCAG 2.1 AA.

@@ -89,10 +89,15 @@ export function AppLayout() {
         <DialogTitle>Create New Task</DialogTitle>
         <DialogContent sx={{ pt: 1 }}>
           <Box sx={{ mt: 1 }}>
-            <CreateTaskForm initiallyExpanded={true} />
+            <CreateTaskForm 
+              initiallyExpanded={true} 
+              onSuccess={handleClose}
+              onCancel={handleClose}
+            />
           </Box>
         </DialogContent>
       </Dialog>
+
     </Box>
   )
 }

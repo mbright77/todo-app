@@ -18,7 +18,10 @@ Single user, single device. No accounts, no server, no cloud sync, no telemetry.
 | Local storage      | IndexedDB via Dexie.js  | Async, indexed, structured storage with a clean query API        |
 | Reactivity (DB)    | dexie-react-hooks       | `useLiveQuery` keeps UI in sync with IndexedDB automatically     |
 | PWA tooling        | vite-plugin-pwa         | Service worker generation, caching strategies, manifest          |
-| Styling            | CSS Modules             | Scoped styles, zero runtime, aligns with feature isolation. See [UI Design Guide](./DESIGN_GUIDE.md) |
+| Styling            | MUI v7 (Material UI)    | Component-based styling, MD3 aesthetic, built-in accessibility. See [UI Design Guide](./DESIGN_GUIDE.md) |
+| Icons              | MUI Icons (Material)    | Standardized Material Design icon set, bundled for offline use. |
+| Fonts              | @fontsource/roboto      | Bundled Roboto font for self-hosted, offline-first typography. |
+| Transitions        | react-transition-group  | Used with MUI components for fluid list animations. |
 | Testing            | Vitest + Testing Library| Vite-native test runner, component and integration tests         |
 | Linting            | ESLint + Prettier       | Consistent code style                                            |
 
@@ -75,29 +78,21 @@ src/
 │           └── SearchPage.tsx
 │
 ├── features/                     # User-facing interactions
-│   ├── create-task/              #   Create a new task
-│   │   ├── ui/
-│   │   │   └── CreateTaskForm.tsx
-│   │   └── model/
-│   │       └── create-task.ts
+├──   create-task/              #   Create a new task
+│   │   └── ui/
+│   │       └── CreateTaskForm.tsx
 │   ├── edit-task/                #   Edit an existing task
-│   │   ├── ui/
-│   │   │   └── EditTaskForm.tsx
-│   │   └── model/
-│   │       └── edit-task.ts
+│   │   └── ui/
+│   │       └── EditTaskForm.tsx
 │   ├── complete-task/            #   Toggle task completion
-│   │   ├── ui/
-│   │   │   └── CompleteCheckbox.tsx
-│   │   └── model/
-│   │       └── complete-task.ts
+│   │   └── ui/
+│   │       └── CompleteCheckbox.tsx
 │   ├── delete-task/              #   Delete a task
-│   │   └── model/
-│   │       └── delete-task.ts
-│   └── search-tasks/             #   Full-text task search
-│       ├── ui/
-│       │   └── SearchBar.tsx
-│       └── model/
-│           └── search-tasks.ts
+│   │   └── ui/
+│   │       └── DeleteButton.tsx
+│   └── search-tasks/             #   Task filtering logic
+│       └── ui/
+│           └── TaskFilters.tsx   #     Filter dialog
 │
 ├── entities/                     # Domain objects
 │   └── task/                     #   Task entity

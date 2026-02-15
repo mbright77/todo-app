@@ -35,5 +35,4 @@ Storage: IndexedDB (or SQLite via WASM)
 - No sharing
 - No backend
 
-## UI Design
-A sample image of the desired visual design is in file todo_design.png
+
