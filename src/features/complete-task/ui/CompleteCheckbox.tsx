@@ -14,7 +14,7 @@ export function CompleteCheckbox({ taskId, completed, label }: CompleteCheckboxP
   return (
     <Checkbox
       checked={completed}
-      onChange={(event) => toggleTask(taskId, event.target.checked)}
+      onChange={(_, checked) => toggleTask(taskId, checked)}
       inputProps={{ 'aria-label': `Mark ${ariaLabel} as completed` }}
     />
   )

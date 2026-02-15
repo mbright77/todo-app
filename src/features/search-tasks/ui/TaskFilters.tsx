@@ -7,7 +7,7 @@ type TaskFiltersProps = {
 
 export function TaskFilters({ onClose }: TaskFiltersProps) {
   const { filters, filter, setFilter } = useTaskStore()
-  const visibleFilters = filters.filter((item) => item.key === 'all' || item.key === 'active')
+  const visibleFilters = filters.filter((item) => item.key === 'active' || item.key === 'today')
 
   return (
     <Dialog open={true} onClose={onClose} fullWidth maxWidth="xs">

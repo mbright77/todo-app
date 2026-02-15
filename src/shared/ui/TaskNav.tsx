@@ -2,7 +2,7 @@ import { Tabs, Tab, Box } from '@mui/material'
 import { Link, useLocation } from 'react-router-dom'
 
 const LINKS = [
-  { to: '/today', label: 'Today' },
+  { to: '/active', label: 'Active' },
   { to: '/upcoming', label: 'Upcoming' },
   { to: '/completed', label: 'Completed' },
   { to: '/search', label: 'Search' },

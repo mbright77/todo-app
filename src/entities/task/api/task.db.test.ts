@@ -42,14 +42,14 @@ describe('taskDb', () => {
     expect(completed[0].title).toBe('Done')
   })
 
-  it('filters by today and upcoming', async () => {
+  it('filters by active, today, and upcoming', async () => {
     const today = new Date()
     const tomorrow = new Date(today)
     tomorrow.setDate(today.getDate() + 1)
 
     await taskDb.add(
       buildTask({
-        title: 'Today task',
+        title: 'Due today',
         dueDate: toDateKey(today),
       })
     )
@@ -61,13 +61,46 @@ describe('taskDb', () => {
     )
     await taskDb.add(buildTask({ title: 'No due date' }))
 
+    const activeTasks = await taskDb.getByFilter('active')
     const todayTasks = await taskDb.getByFilter('today')
     const upcomingTasks = await taskDb.getByFilter('upcoming')
 
+    expect(activeTasks).toHaveLength(2)
+    expect(activeTasks.map((task) => task.title)).toEqual(['No due date', 'Due today'])
     expect(todayTasks).toHaveLength(1)
-    expect(todayTasks[0].title).toBe('Today task')
+    expect(todayTasks[0].title).toBe('Due today')
     expect(upcomingTasks).toHaveLength(1)
     expect(upcomingTasks[0].title).toBe('Upcoming task')
+  })
+
+  it('excludes completed tasks from active and today', async () => {
+    const today = new Date()
+    const todayKey = toDateKey(today)
+
+    await taskDb.add(buildTask({ title: 'Done today', completed: true, dueDate: todayKey }))
+    await taskDb.add(buildTask({ title: 'Done no date', completed: true }))
+    await taskDb.add(buildTask({ title: 'Active today', dueDate: todayKey }))
+    await taskDb.add(buildTask({ title: 'Active no date' }))
+
+    const activeTasks = await taskDb.getByFilter('active')
+    const todayTasks = await taskDb.getByFilter('today')
+
+    expect(activeTasks).toHaveLength(2)
+    expect(activeTasks.map((task) => task.title)).toEqual(
+      expect.arrayContaining(['Active today', 'Active no date'])
+    )
+    expect(todayTasks).toHaveLength(1)
+    expect(todayTasks[0].title).toBe('Active today')
+  })
+
+  it('treats ISO due dates as today', async () => {
+    const todayIso = new Date().toISOString()
+    await taskDb.add(buildTask({ title: 'ISO today', dueDate: todayIso }))
+
+    const todayTasks = await taskDb.getByFilter('today')
+
+    expect(todayTasks).toHaveLength(1)
+    expect(todayTasks[0].title).toBe('ISO today')
   })
 
   it('searches by title', async () => {

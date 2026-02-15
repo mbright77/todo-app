@@ -12,8 +12,21 @@ export const taskDb = {
       return db.tasks.orderBy('createdAt').reverse().toArray()
     }
 
+    if (filter === 'active') {
+      const list = await db.tasks
+        .filter((task) => {
+          if (task.completed) return false
+          if (!task.dueDate) return true
+          return isToday(task.dueDate)
+        })
+        .toArray()
+      return sortByCreatedAt(list)
+    }
+
     if (filter === 'today') {
-      const list = await db.tasks.filter((task) => !!task.dueDate && isToday(task.dueDate)).toArray()
+      const list = await db.tasks
+        .filter((task) => !task.completed && !!task.dueDate && isToday(task.dueDate))
+        .toArray()
       return sortByCreatedAt(list)
     }
 

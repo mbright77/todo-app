@@ -20,7 +20,7 @@ working, testable increment of the application.
 | 1.3 | Dexie database instance                        | `shared/lib/db.ts` with `tasks` table, version 1 schema         |
 | 1.4 | Task entity types                              | `entities/task/model/types.ts` -- `Task` interface               |
 | 1.5 | Shared UI kit                                  | Button, Input, IconButton, Layout components with CSS Modules    |
-| 1.6 | App shell & router                             | React Router with placeholder pages for Today, Upcoming, etc.   |
+| 1.6 | App shell & router                             | React Router with placeholder pages for Active, Upcoming, etc.  |
 | 1.7 | PWA manifest + icons                           | `vite-plugin-pwa` config, manifest.json, app icons               |
 | 1.8 | Global styles & design tokens                  | CSS reset, colour palette, spacing scale, typography             |
 
@@ -32,7 +32,7 @@ working, testable increment of the application.
 - PWA configured in `vite.config.ts` using `vite-plugin-pwa@1.2.0`.
 - Feature Sliced folder structure created under `src/`.
 - IndexedDB set up with Dexie (`src/shared/lib/db.ts`) and Task model (`src/entities/task/model/types.ts`).
-- App router is wired with placeholder pages for Today/Upcoming/Completed/Search.
+- App router is wired with placeholder pages for Active/Upcoming/Completed/Search.
 - Global styles and shared UI primitives are in place.
 
 #### Notes
@@ -58,7 +58,7 @@ working, testable increment of the application.
 | 2.7 | Delete task feature                            | `features/delete-task/` -- delete action + Dexie remove           |
 | 2.8 | Zustand UI state store                         | `entities/task/model/store.ts` -- active filter, transient state  |
 | 2.9 | Unit & integration tests                       | Vitest tests for DB layer, store actions, and components          |
-| 2.10 | Today page wiring                             | Render CRUD UI on `pages/today/`                                  |
+| 2.10 | Active page wiring                            | Render CRUD UI on `pages/active/`                                  |
 
 **Exit criteria:** Full CRUD lifecycle works. Tasks persist across page reloads via IndexedDB.
 
@@ -66,16 +66,16 @@ working, testable increment of the application.
 
 ## Phase 3 -- Task Lists & Search
 
-**Goal:** Users can view tasks grouped by Today / Upcoming / Completed, and search by title.
+**Goal:** Users can view tasks grouped by Active / Upcoming / Completed, and search by title.
 
 **Status:** Complete. Phase 3 deliverables are finished and verified.
 
 | #   | Deliverable                                    | Details                                                         |
 | --- | ---------------------------------------------- | --------------------------------------------------------------- |
-| 3.1 | Today page                                     | `pages/today/` -- tasks where `dueDate` is today                 |
+| 3.1 | Active page                                    | `pages/active/` -- tasks without due dates or due today            |
 | 3.2 | Upcoming page                                  | `pages/upcoming/` -- tasks where `dueDate` is in the future      |
 | 3.3 | Completed page                                 | `pages/completed/` -- tasks where `completed === true`            |
-| 3.4 | Tab navigation                                 | Tab bar or sidebar to switch between Today, Upcoming, Completed  |
+| 3.4 | Tab navigation                                 | Tab bar or sidebar to switch between Active, Upcoming, Completed |
 | 3.5 | Search feature                                 | `features/search-tasks/` -- SearchBar + live query by title       |
 | 3.6 | Search results page                            | `pages/search/` -- displays filtered results                      |
 | 3.7 | Empty states                                   | Friendly empty state UI for each list and search                  |

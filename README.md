@@ -48,5 +48,5 @@ To enable Pages:
 - `src/app`: app shell, theme, routing
 - `src/entities`: task data model, db access, and UI
 - `src/features`: task creation, editing, filtering
-- `src/pages`: Today, Upcoming, Completed, Search
+- `src/pages`: Active, Upcoming, Completed, Search
 - `src/shared`: shared UI wrappers

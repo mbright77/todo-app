@@ -15,7 +15,7 @@ Single user on one device.
 - Complete tasks
 - Edit tasks
 - Delete tasks
-- Task lists (Today, Upcoming, Completed)
+- Task lists (Active, Upcoming, Completed)
 - Search
 
 ## Data Rules
@@ -34,5 +34,4 @@ Storage: IndexedDB (or SQLite via WASM)
 - No sync
 - No sharing
 - No backend
-
 

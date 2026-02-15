@@ -64,9 +64,9 @@ src/
 │   └── index.tsx                 #   Entry point, mounts <App />
 │
 ├── pages/                        # Route-level pages
-│   ├── today/                    #   "Today" task list view
+│   ├── active/                   #   "Active" task list view
 │   │   └── ui/
-│   │       └── TodayPage.tsx
+│   │       └── ActivePage.tsx
 │   ├── upcoming/                 #   "Upcoming" task list view
 │   │   └── ui/
 │   │       └── UpcomingPage.tsx
@@ -169,7 +169,7 @@ export const db = new TodoDatabase();
 ### Index Rationale
 
 - **`completed`** -- partition tasks into active vs. completed lists.
-- **`dueDate`** -- sort and filter for Today / Upcoming views.
+- **`dueDate`** -- sort and filter for Active / Upcoming views.
 - **`createdAt`** -- default sort order within a list.
 - **`title`** -- enables fast prefix search via `where("title").startsWithIgnoreCase(...)`.
 
@@ -194,7 +194,7 @@ This means Dexie is the **source of truth**. Zustand is used for ephemeral UI st
 
 ## Behavior Notes
 
-- **Today list:** tasks with `dueDate` equal to today (date-only `YYYY-MM-DD` comparison).
+- **Active list:** tasks that are not completed and either have no due date or are due today.
 - **Upcoming list:** tasks with `dueDate` after today and `completed === false`.
 - **Completed list:** tasks with `completed === true`.
 - **Search:** case-insensitive match on `title` substring; empty query returns no results.
