@@ -1,15 +1,18 @@
 import { AppBar, Box, Container, Toolbar, Typography, IconButton, Fab, Dialog, DialogTitle, DialogContent, useColorScheme, Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useNavigate } from 'react-router-dom'
 import { TaskNav } from '../../shared/ui/TaskNav'
 import LightModeIcon from '@mui/icons-material/LightMode'
 import DarkModeIcon from '@mui/icons-material/DarkMode'
 import SettingsBrightnessIcon from '@mui/icons-material/SettingsBrightness'
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
 import AddIcon from '@mui/icons-material/Add'
 import { useState } from 'react'
 import { CreateTaskForm } from '../../features/create-task/ui/CreateTaskForm'
+import { APP_NAME } from '../../shared/config/constants'
 
 export function AppLayout() {
   const { mode, setMode, systemMode } = useColorScheme()
+  const navigate = useNavigate()
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
@@ -38,8 +41,11 @@ export function AppLayout() {
       >
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 700 }}>
-            Todo App
+            {APP_NAME}
           </Typography>
+          <IconButton color="inherit" onClick={() => navigate('/help')} aria-label="Help">
+            <HelpOutlineIcon />
+          </IconButton>
           <IconButton 
             color="inherit" 
             onClick={handleMenuOpen}

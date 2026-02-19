@@ -4,6 +4,7 @@ import { SearchPage } from '../pages/search/ui/SearchPage'
 import { ActivePage } from '../pages/active/ui/ActivePage'
 import { UpcomingPage } from '../pages/upcoming/ui/UpcomingPage'
 import { AppLayout } from './ui/AppLayout'
+import { HelpPage } from '../pages/help/ui/HelpPage'
 
 export const router = createBrowserRouter(
   [
@@ -16,6 +17,7 @@ export const router = createBrowserRouter(
         { path: 'upcoming', element: <UpcomingPage /> },
         { path: 'completed', element: <CompletedPage /> },
         { path: 'search', element: <SearchPage /> },
+        { path: 'help', element: <HelpPage /> },
       ],
     },
   ],

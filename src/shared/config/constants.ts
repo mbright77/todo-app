@@ -1,1 +1,1 @@
-export const APP_NAME = 'Todo App'
+export const APP_NAME = 'Listy'

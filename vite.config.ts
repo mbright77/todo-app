@@ -56,8 +56,8 @@ export default defineConfig({
         ],
       },
       manifest: {
-        name: 'Todo App',
-        short_name: 'Todo',
+        name: 'Listy',
+        short_name: 'Listy',
         description: 'Local-only, offline-first todo app',
         theme_color: '#6750A4',
         background_color: '#FFFBFE',
