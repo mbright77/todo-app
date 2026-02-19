@@ -1,5 +1,5 @@
 import { useLiveQuery } from 'dexie-react-hooks'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { taskDb } from '../api/task.db'
 import { TaskCard } from './TaskCard'
 import { useTaskStore } from '../model/store'
@@ -14,6 +14,7 @@ import {
   useSensor,
   useSensors,
   type DragEndEvent,
+  type DragStartEvent,
 } from '@dnd-kit/core'
 import {
   SortableContext,
@@ -61,10 +62,18 @@ const buildOrderUpdates = (sortedTasks: Task[], activeId: string, overId: string
   return [{ id: movedTask.id, order }]
 }
 
-type SortableTaskItemProps = { task: Task } & CollapseProps
+type SortableTaskItemProps = { task: Task; isActiveDrag?: boolean } & CollapseProps
 
-function SortableTaskItem({ task, ...collapseProps }: SortableTaskItemProps) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+function SortableTaskItem({ task, isActiveDrag, ...collapseProps }: SortableTaskItemProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
     id: task.id,
   })
   const adjustedTransform = transform
@@ -81,18 +90,24 @@ function SortableTaskItem({ task, ...collapseProps }: SortableTaskItemProps) {
       <Box
         ref={setNodeRef}
         style={style}
-        {...attributes}
-        {...listeners}
         sx={{
           pb: 1,
-          touchAction: 'manipulation',
-          cursor: isDragging ? 'grabbing' : 'grab',
+          touchAction: 'none',
+          opacity: isActiveDrag ? 0.98 : 1,
           '& .task-card': {
             boxShadow: isDragging ? 6 : undefined,
           },
         }}
       >
-        <TaskCard task={task} />
+        <TaskCard
+          task={task}
+          isDragging={isDragging}
+          dragHandleProps={{
+            ref: setActivatorNodeRef,
+            ...attributes,
+            ...listeners,
+          }}
+        />
       </Box>
     </Collapse>
   )
@@ -103,9 +118,10 @@ export function TaskList({ filterKey, emptyMessage }: TaskListProps) {
   const activeFilter = filterKey ?? storeFilter
   const tasks = useLiveQuery(() => taskDb.getByFilter(activeFilter), [activeFilter])
   const reorderTasks = useTaskStore((state) => state.reorderTasks)
+  const [activeDragId, setActiveDragId] = useState<string | null>(null)
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
-    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 5 } })
+    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 10 } })
   )
 
   const taskIds = useMemo(() => tasks?.map((task) => task.id) ?? [], [tasks])
@@ -128,21 +144,36 @@ export function TaskList({ filterKey, emptyMessage }: TaskListProps) {
     )
   }
 
+  const onDragStart = (event: DragStartEvent) => {
+    setActiveDragId(String(event.active.id))
+  }
+
   const onDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event
+    setActiveDragId(null)
     if (!over || active.id === over.id) return
 
     const updates = buildOrderUpdates(tasks, String(active.id), String(over.id))
     await reorderTasks(updates)
   }
 
+  const onDragCancel = () => {
+    setActiveDragId(null)
+  }
+
   return (
-    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragStart={onDragStart}
+      onDragEnd={onDragEnd}
+      onDragCancel={onDragCancel}
+    >
       <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>
         <Stack spacing={0}>
           <TransitionGroup component={null}>
             {tasks.map((task) => (
-              <SortableTaskItem key={task.id} task={task} />
+              <SortableTaskItem key={task.id} task={task} isActiveDrag={task.id === activeDragId} />
             ))}
           </TransitionGroup>
         </Stack>
