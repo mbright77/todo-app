@@ -48,6 +48,11 @@ The app uses **Tonal Elevation** where possible (surface color tinting) combined
 4. **Motion:** Use MUI `Collapse` and `Fade` for entry/exit animations. All animations respect the `prefers-reduced-motion` system setting.
 5. **Dark Mode:** Supports system-level and manual dark mode toggling via the `AppBar` toggle.
 
+## Task Reordering
+
+- Drag-and-drop reordering uses a "lift" effect (shadow + slight scale) to make the active card feel detached.
+- On touch devices, drag activates via press-and-hold (about 500ms) to avoid accidental reordering while scrolling.
+
 ---
 
 Refer to `src/app/theme.ts` for the programmatic implementation of these guidelines.

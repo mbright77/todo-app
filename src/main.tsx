@@ -31,6 +31,11 @@ createRoot(rootElement).render(
   </StrictMode>
 )
 
-registerSW({
+const updateSW = registerSW({
   immediate: true,
+  onNeedRefresh() {
+    updateSW(true)
+  },
 })
+
+updateSW()

@@ -1,7 +1,13 @@
-# Todo App
+# Listy
+
+## Documents
+- `docs/PROJECT.md` -- Product overview and scope
+- `docs/ARCHITECTURE.md` -- Code structure and technical decisions
+- `docs/DESIGN_GUIDE.md` -- UI/UX direction and design rules
+- `docs/ROADMAP.md` -- Phased plan and delivery status
 
 ## Product
-A local-only, offline-first todo app for mobile and desktop.
+A local-only, offline-first task list for mobile and desktop.
 
 No accounts.
 No server.
@@ -17,6 +23,8 @@ Single user on one device.
 - Delete tasks
 - Task lists (Active, Upcoming, Completed)
 - Search
+- Global ordering (drag to reorder)
+- Help page
 
 ## Data Rules
 All data is stored locally on the device.
@@ -27,11 +35,13 @@ No analytics.
 ## Technology
 Frontend: React + TypeScript
 Platform: PWA
-Storage: IndexedDB (or SQLite via WASM)
+Storage: IndexedDB (Dexie)
+
+## PWA Updates
+The installed PWA checks for updates on load and will silently refresh to apply new versions.
 
 ## Non-Goals
 - No user accounts
 - No sync
 - No sharing
 - No backend
-

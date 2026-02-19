@@ -1,14 +1,17 @@
-# Todo App
+# Listy
 
-Local-only, offline-first todo app built with React, TypeScript, IndexedDB (Dexie), and MUI v7 with a Material Design 3-inspired theme.
+Local-only, offline-first task list built with React, TypeScript, IndexedDB (Dexie), and MUI v7 with a Material Design 3-inspired theme.
 
 ## Features
 
 - Offline-first, local storage with IndexedDB (no server required)
 - Material Design 3 UI with light, dark, and system color modes
-- Task creation via disclosure panel and floating action button
+- Task creation via floating action button + dialog
+- Global ordering: drag to reorder across all tabs (press-and-hold on mobile)
 - Focus-friendly dialogs and accessible form labels
+- Help page in the header
 - PWA-ready with GitHub Pages deployment workflow
+- Installed PWA checks for updates on load and silently refreshes to apply new versions
 
 ## Tech Stack
 
@@ -48,5 +51,5 @@ To enable Pages:
 - `src/app`: app shell, theme, routing
 - `src/entities`: task data model, db access, and UI
 - `src/features`: task creation, editing, filtering
-- `src/pages`: Active, Upcoming, Completed, Search
+- `src/pages`: Active, Upcoming, Completed, Search, Help
 - `src/shared`: shared UI wrappers

@@ -2,7 +2,7 @@
 
 ## Overview
 
-A local-only, offline-first todo application built as a Progressive Web App.
+A local-only, offline-first task list built as a Progressive Web App.
 Single user, single device. No accounts, no server, no cloud sync, no telemetry.
 
 ---
@@ -12,7 +12,7 @@ Single user, single device. No accounts, no server, no cloud sync, no telemetry.
 | Concern            | Choice                  | Rationale                                                        |
 | ------------------ | ----------------------- | ---------------------------------------------------------------- |
 | Language           | TypeScript 5+           | Type safety across the entire codebase                           |
-| UI framework       | React 18+               | Component model, ecosystem, PWA compatibility                    |
+| UI framework       | React 19+               | Component model, ecosystem, PWA compatibility                    |
 | Build tool         | Vite                    | Fast HMR, native ESM, first-class TS/React support              |
 | State management   | Zustand                 | Minimal boilerplate, works well with sliced stores per feature   |
 | Local storage      | IndexedDB via Dexie.js  | Async, indexed, structured storage with a clean query API        |
@@ -134,6 +134,7 @@ All data lives in a single IndexedDB database managed by Dexie.js.
 | `description`| `string \| null`      | No      | Optional longer description          |
 | `completed`  | `boolean`             | Yes     | Whether the task is done             |
 | `dueDate`    | `string \| null`      | Yes     | ISO-8601 date string, nullable       |
+| `order`      | `number`              | Yes     | Global sort key (lower shows first)  |
 | `createdAt`  | `string`              | Yes     | ISO-8601 timestamp, set on creation  |
 | `updatedAt`  | `string`              | No      | ISO-8601 timestamp, set on mutation  |
 
@@ -158,7 +159,7 @@ class TodoDatabase extends Dexie {
   constructor() {
     super("todo-app");
     this.version(1).stores({
-      tasks: "id, title, completed, dueDate, createdAt",
+      tasks: "id, order, title, completed, dueDate, createdAt",
     });
   }
 }
@@ -170,7 +171,8 @@ export const db = new TodoDatabase();
 
 - **`completed`** -- partition tasks into active vs. completed lists.
 - **`dueDate`** -- sort and filter for Active / Upcoming views.
-- **`createdAt`** -- default sort order within a list.
+- **`order`** -- global user-defined ordering shared across views.
+- **`createdAt`** -- tie-breaker within the same order.
 - **`title`** -- enables fast prefix search via `where("title").startsWithIgnoreCase(...)`.
 
 ---
@@ -199,6 +201,15 @@ This means Dexie is the **source of truth**. Zustand is used for ephemeral UI st
 - **Completed list:** tasks with `completed === true`.
 - **Search:** case-insensitive match on `title` substring; empty query returns no results.
 - **Due dates:** stored as `YYYY-MM-DD` (from date inputs) and normalized before comparisons.
+- **Ordering:** tasks are sorted by `order` ascending across all views. New tasks default to the top.
+- **Reorder gesture:** drag cards to reorder; on touch devices drag activates after ~500ms press-and-hold.
+
+## PWA Update Behavior
+
+GitHub Pages deployments are picked up by the installed PWA on next launch:
+
+- Service worker uses `skipWaiting` and `clientsClaim`.
+- App calls `update()` on load and silently reloads when an update is available.
 
 ## Key Constraints
 
