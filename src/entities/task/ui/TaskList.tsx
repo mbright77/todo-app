@@ -8,7 +8,7 @@ import { Box, Typography, Stack, CircularProgress, Collapse, type CollapseProps 
 import { TransitionGroup } from 'react-transition-group'
 import {
   DndContext,
-  PointerSensor,
+  MouseSensor,
   TouchSensor,
   closestCenter,
   useSensor,
@@ -120,7 +120,7 @@ export function TaskList({ filterKey, emptyMessage }: TaskListProps) {
   const reorderTasks = useTaskStore((state) => state.reorderTasks)
   const [activeDragId, setActiveDragId] = useState<string | null>(null)
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(MouseSensor, { activationConstraint: { distance: 8 } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 500, tolerance: 10 } })
   )
 
