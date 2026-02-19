@@ -12,6 +12,7 @@ const buildTask = (overrides: Partial<Task> = {}): Task => ({
   description: overrides.description ?? null,
   completed: overrides.completed ?? false,
   dueDate: overrides.dueDate ?? null,
+  order: overrides.order ?? 0,
   createdAt: overrides.createdAt ?? new Date().toISOString(),
   updatedAt: overrides.updatedAt ?? new Date().toISOString(),
 })

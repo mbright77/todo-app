@@ -10,6 +10,7 @@ const buildTask = (overrides: Partial<Task> = {}): Task => ({
   description: overrides.description ?? null,
   completed: overrides.completed ?? false,
   dueDate: overrides.dueDate ?? null,
+  order: overrides.order ?? 0,
   createdAt: overrides.createdAt ?? new Date().toISOString(),
   updatedAt: overrides.updatedAt ?? new Date().toISOString(),
 })
@@ -21,7 +22,7 @@ describe('taskDb', () => {
 
 
   it('adds and returns tasks', async () => {
-    const task = buildTask({ title: 'Alpha' })
+    const task = buildTask({ title: 'Alpha', order: 0 })
     await taskDb.add(task)
 
     const tasks = await taskDb.getAll()
@@ -30,8 +31,8 @@ describe('taskDb', () => {
   })
 
   it('filters by completion', async () => {
-    await taskDb.add(buildTask({ title: 'Open', completed: false }))
-    await taskDb.add(buildTask({ title: 'Done', completed: true }))
+    await taskDb.add(buildTask({ title: 'Open', completed: false, order: 0 }))
+    await taskDb.add(buildTask({ title: 'Done', completed: true, order: 1 }))
 
     const active = await taskDb.getByFilter('active')
     const completed = await taskDb.getByFilter('completed')
@@ -40,6 +41,15 @@ describe('taskDb', () => {
     expect(active[0].title).toBe('Open')
     expect(completed).toHaveLength(1)
     expect(completed[0].title).toBe('Done')
+  })
+
+  it('sorts results by order', async () => {
+    await taskDb.add(buildTask({ title: 'Third', order: 2 }))
+    await taskDb.add(buildTask({ title: 'First', order: 0 }))
+    await taskDb.add(buildTask({ title: 'Second', order: 1 }))
+
+    const tasks = await taskDb.getAll()
+    expect(tasks.map((task) => task.title)).toEqual(['First', 'Second', 'Third'])
   })
 
   it('filters by active, today, and upcoming', async () => {
@@ -51,15 +61,17 @@ describe('taskDb', () => {
       buildTask({
         title: 'Due today',
         dueDate: toDateKey(today),
+        order: 1,
       })
     )
     await taskDb.add(
       buildTask({
         title: 'Upcoming task',
         dueDate: toDateKey(tomorrow),
+        order: 2,
       })
     )
-    await taskDb.add(buildTask({ title: 'No due date' }))
+    await taskDb.add(buildTask({ title: 'No due date', order: 0 }))
 
     const activeTasks = await taskDb.getByFilter('active')
     const todayTasks = await taskDb.getByFilter('today')
@@ -77,10 +89,10 @@ describe('taskDb', () => {
     const today = new Date()
     const todayKey = toDateKey(today)
 
-    await taskDb.add(buildTask({ title: 'Done today', completed: true, dueDate: todayKey }))
-    await taskDb.add(buildTask({ title: 'Done no date', completed: true }))
-    await taskDb.add(buildTask({ title: 'Active today', dueDate: todayKey }))
-    await taskDb.add(buildTask({ title: 'Active no date' }))
+    await taskDb.add(buildTask({ title: 'Done today', completed: true, dueDate: todayKey, order: 3 }))
+    await taskDb.add(buildTask({ title: 'Done no date', completed: true, order: 2 }))
+    await taskDb.add(buildTask({ title: 'Active today', dueDate: todayKey, order: 1 }))
+    await taskDb.add(buildTask({ title: 'Active no date', order: 0 }))
 
     const activeTasks = await taskDb.getByFilter('active')
     const todayTasks = await taskDb.getByFilter('today')
@@ -95,7 +107,7 @@ describe('taskDb', () => {
 
   it('treats ISO due dates as today', async () => {
     const todayIso = new Date().toISOString()
-    await taskDb.add(buildTask({ title: 'ISO today', dueDate: todayIso }))
+    await taskDb.add(buildTask({ title: 'ISO today', dueDate: todayIso, order: 0 }))
 
     const todayTasks = await taskDb.getByFilter('today')
 
@@ -104,8 +116,8 @@ describe('taskDb', () => {
   })
 
   it('searches by title', async () => {
-    await taskDb.add(buildTask({ title: 'Write docs' }))
-    await taskDb.add(buildTask({ title: 'Review PR' }))
+    await taskDb.add(buildTask({ title: 'Write docs', order: 1 }))
+    await taskDb.add(buildTask({ title: 'Review PR', order: 0 }))
 
     const results = await taskDb.searchByTitle('doc')
     expect(results).toHaveLength(1)

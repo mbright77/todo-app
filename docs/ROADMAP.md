@@ -103,3 +103,23 @@ working, testable increment of the application.
 | 4.8 | Production build & deployment config           | Optimised Vite build, GitHub Pages deployment workflow ready      |
 
 **Exit criteria:** App installs on mobile and desktop, works offline, and meets WCAG 2.1 AA.
+
+---
+
+## Phase 5 -- Task Ordering
+
+**Goal:** Users can reorder tasks via drag-and-drop with a global order shared across all tabs.
+
+**Status:** In progress.
+
+| #   | Deliverable                                    | Details                                                                 |
+| --- | ---------------------------------------------- | ----------------------------------------------------------------------- |
+| 5.1 | Task ordering model                            | Add `order` field to Task and default new tasks to top                  |
+| 5.2 | IndexedDB migration                            | Dexie schema bump with `order` index + backfill ordering for existing   |
+| 5.3 | Ordered task queries                           | Apply `order` sorting across list filters and search                    |
+| 5.4 | Drag-and-drop interactions                     | TaskList supports pointer + long-press drag with pop-out styling        |
+| 5.5 | Global ordering                                | Reorder updates persist across Active/Upcoming/Completed/Search         |
+| 5.6 | Reindex safeguard                              | Reindex order values when gaps become too small                         |
+| 5.7 | Tests                                          | Coverage for order migration, sorting, and reordering behavior          |
+
+**Exit criteria:** Tasks can be reordered by drag-and-drop on desktop and mobile. Order persists globally across all views.

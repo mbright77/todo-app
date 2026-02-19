@@ -11,6 +11,7 @@ type TaskCardProps = {
 export function TaskCard({ task }: TaskCardProps) {
   return (
     <Paper
+      className="task-card"
       variant="outlined"
       sx={{
         mb: 1,

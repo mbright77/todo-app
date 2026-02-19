@@ -2,14 +2,21 @@ import { db } from '../../../shared/lib/db'
 import type { Task, TaskFilterKey } from '../model/types'
 import { isToday, normalizeDateKey } from '../../../shared/lib/date'
 
-const sortByCreatedAt = (list: Task[]) =>
-  list.sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+const sortByOrder = (list: Task[]) =>
+  list.sort((a, b) => {
+    if (a.order !== b.order) return a.order - b.order
+    return b.createdAt.localeCompare(a.createdAt)
+  })
 
 export const taskDb = {
-  getAll: () => db.tasks.orderBy('createdAt').reverse().toArray(),
+  getAll: async () => {
+    const list = await db.tasks.toArray()
+    return sortByOrder(list)
+  },
   getByFilter: async (filter: TaskFilterKey) => {
     if (filter === 'all') {
-      return db.tasks.orderBy('createdAt').reverse().toArray()
+      const list = await db.tasks.toArray()
+      return sortByOrder(list)
     }
 
     if (filter === 'active') {
@@ -20,14 +27,14 @@ export const taskDb = {
           return isToday(task.dueDate)
         })
         .toArray()
-      return sortByCreatedAt(list)
+      return sortByOrder(list)
     }
 
     if (filter === 'today') {
       const list = await db.tasks
         .filter((task) => !task.completed && !!task.dueDate && isToday(task.dueDate))
         .toArray()
-      return sortByCreatedAt(list)
+      return sortByOrder(list)
     }
 
     if (filter === 'upcoming') {
@@ -40,13 +47,13 @@ export const taskDb = {
           return !!dueKey && dueKey > todayKey
         })
         .toArray()
-      return list.sort((a, b) => (a.dueDate ?? '').localeCompare(b.dueDate ?? ''))
+      return sortByOrder(list)
     }
 
     const completed = filter === 'completed'
     const list = await db.tasks.filter((task) => task.completed === completed).toArray()
 
-    return sortByCreatedAt(list)
+    return sortByOrder(list)
   },
   searchByTitle: async (query: string) => {
     const trimmed = query.trim()
@@ -56,10 +63,19 @@ export const taskDb = {
       .filter((task) => task.title.toLowerCase().includes(trimmed.toLowerCase()))
       .toArray()
 
-    return sortByCreatedAt(list)
+    return sortByOrder(list)
   },
   add: (task: Task) => db.tasks.add(task),
   update: (id: string, update: Partial<Task>) => db.tasks.update(id, update),
   remove: (id: string) => db.tasks.delete(id),
   clear: () => db.tasks.clear(),
+  getMinOrder: async () => {
+    const list = await db.tasks.orderBy('order').limit(1).toArray()
+    return list[0]?.order
+  },
+  updateOrder: (id: string, order: number) => db.tasks.update(id, { order }),
+  bulkUpdateOrder: (updates: { id: string; order: number }[]) =>
+    db.transaction('rw', db.tasks, async () => {
+      await Promise.all(updates.map((update) => db.tasks.update(update.id, { order: update.order })))
+    }),
 }

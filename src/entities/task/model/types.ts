@@ -4,6 +4,7 @@ export type Task = {
   description: string | null
   completed: boolean
   dueDate: string | null
+  order: number
   createdAt: string
   updatedAt: string
 }
