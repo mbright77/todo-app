@@ -121,7 +121,7 @@ export function TaskList({ filterKey, emptyMessage }: TaskListProps) {
   const [activeDragId, setActiveDragId] = useState<string | null>(null)
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
-    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 10 } })
+    useSensor(TouchSensor, { activationConstraint: { delay: 500, tolerance: 10 } })
   )
 
   const taskIds = useMemo(() => tasks?.map((task) => task.id) ?? [], [tasks])

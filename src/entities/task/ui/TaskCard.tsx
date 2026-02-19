@@ -41,6 +41,10 @@ export function TaskCard({ task, isDragging = false, dragHandleProps }: TaskCard
             boxShadow: (theme) => theme.shadows[2],
           },
         },
+        isDragging && {
+          transform: 'translateY(-2px)',
+          boxShadow: (theme) => theme.shadows[6],
+        },
         dragHandleStyles,
       ]}
     >
