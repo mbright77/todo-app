@@ -5,6 +5,7 @@
 - `docs/ARCHITECTURE.md` -- Code structure and technical decisions
 - `docs/DESIGN_GUIDE.md` -- UI/UX direction and design rules
 - `docs/ROADMAP.md` -- Phased plan and delivery status
+- `docs/SUB_AGENTS.md` -- Code review sub-agent definitions and standards
 
 ## Product
 A local-only, offline-first task list for mobile and desktop.

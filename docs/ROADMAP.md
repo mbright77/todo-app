@@ -1,6 +1,6 @@
 # Roadmap
 
-Development is split into four sequential phases. Each phase produces a
+Development is split into six sequential phases. Each phase produces a
 working, testable increment of the application.
 
 ---
@@ -123,3 +123,80 @@ working, testable increment of the application.
 | 5.7 | Tests                                          | Coverage for order migration, sorting, and reordering behavior          |
 
 **Exit criteria:** Tasks can be reordered by drag-and-drop on desktop and mobile. Order persists globally across all views.
+
+---
+
+## Phase 6 -- Code Quality & Accessibility Audit Fixes
+
+**Goal:** Resolve all findings raised by the Phase 6 code-review audit (QA Tester, UI/UX Designer, Architect agents). Deliverables are ordered by severity band per the prioritisation rules in `docs/SUB_AGENTS.md`.
+
+**Rules:** No automatic git commits or pushes are allowed unless explicitly asked for by the user. Each single commit must be asked for. All UI changes must follow the [UI Design Guide](./DESIGN_GUIDE.md).
+
+**Status:** Not started.
+
+### Critical findings
+
+| #    | Deliverable                                          | Details                                                                                                      |
+| ---- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| 6.1  | Fix FSD violation: `shared/lib/db.ts` imports entity | Define a local `TaskRecord` type in `shared/lib/db.ts` (or move Dexie class to `entities/task/api/`)         |
+| 6.2  | Fix FSD violation: `TaskCard` imports features       | Replace direct feature imports with an `actions?: ReactNode` slot; inject from pages/features call-sites     |
+| 6.3  | Fix FSD violation: `TaskList` owns feature concerns  | Extract DnD orchestration to `features/reorder-tasks/`; extract `SortableTaskItem`; make `TaskList` pure     |
+| 6.4  | Fix dialog ARIA: missing `aria-labelledby`           | Add `id` to `<DialogTitle>` and matching `aria-labelledby` on `<Dialog>` in `Modal`, `TaskFilters`, AppLayout create-task dialog |
+| 6.5  | Fix filter list ARIA semantics                       | Add `role="listbox"` to filter `<List>`; `role="option"` and `aria-selected` to each `<ListItemButton>`      |
+| 6.6  | Fix loading spinner accessibility                    | Add `aria-label="Loading tasks"` (or `role="status"` wrapper) to `CircularProgress` in `TaskList`            |
+| 6.7  | Fix drag-and-drop keyboard/screen-reader access      | Move drag-handle props to a dedicated `DragIndicatorIcon` button with `aria-roledescription="sortable"` and dynamic `aria-label` |
+
+### High findings
+
+| #    | Deliverable                                          | Details                                                                                                      |
+| ---- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| 6.8  | Fix overdue tasks disappearing                       | Include incomplete past-due tasks in the `active` filter in `task.db.ts`; add test coverage                  |
+| 6.9  | Fix edit-form concurrent save race condition         | Debounce / coalesce `onBlur` saves in `EditTaskForm`; skip save if focus moved to another field in same form |
+| 6.10 | Fix edit-form stale props from live-query updates    | Add `useEffect` in `EditTaskForm` to reset local state when `task.id` changes and field is not focused        |
+| 6.11 | Fix unhandled async error in `onDragEnd`             | Wrap `await reorderTasks(updates)` in try/catch; surface error via snackbar or `ErrorBoundary`               |
+| 6.12 | Move filter state out of entity store                | Move `FILTERS` / `filter` / `setFilter` to `features/filter-tasks/model/` or `shared/config/`               |
+| 6.13 | Extract `buildTask` factory                          | Move `buildTask` to `entities/task/model/task.factory.ts` for isolated testability                           |
+| 6.14 | Fix `sortByOrder` in-place array mutation            | Return `[...list].sort(...)` instead of mutating the input in `task.db.ts`                                   |
+| 6.15 | Add exhaustive check to `getByFilter`                | Add a TypeScript `_: never` default case so new `TaskFilterKey` values cause a compile error                 |
+| 6.16 | Rename/move `TaskFilters` → `features/filter-tasks/` | Rename component to `FilterTasksDialog`; update all imports                                                  |
+| 6.17 | Make visible filter keys configurable                | Replace magic inline condition with a named constant or `allowedKeys` prop                                   |
+| 6.18 | Move `TaskNav` from `shared/ui/` to `app/ui/`        | `TaskNav` encodes app-specific routes and does not belong in the app-agnostic shared layer                   |
+| 6.19 | Decompose `AppLayout`                                | Extract theme switcher to `features/switch-theme/ui/ThemeToggle.tsx`; FAB + dialog to `features/create-task/ui/CreateTaskFab.tsx` |
+| 6.20 | Fix `aria-expanded` on create-task toggle button     | Use `aria-expanded={isExpanded}` or remove the attribute if button is conditionally rendered                  |
+| 6.21 | Fix FAB safe-area insets                             | Use `calc(32px + env(safe-area-inset-bottom/right))` to avoid overlap on notched/iOS devices                 |
+| 6.22 | Add `<nav>` landmark to `TaskNav`                    | Wrap `<Tabs>` in `<Box component="nav" aria-label="Main navigation">`                                        |
+| 6.23 | Fix search field missing label                       | Add `label="Search tasks"` to the `<TextField>` in `SearchPage`                                              |
+| 6.24 | Fix clear-search button missing `aria-label`         | Add `aria-label="Clear search"` to the `<IconButton>` in `SearchPage`                                        |
+| 6.25 | Add live region for search result count              | Wrap `totalLabel` in `<Box role="status" aria-live="polite">` in `SearchPage`                                |
+| 6.26 | Add delete confirmation / undo snackbar              | Show a snackbar with "Undo" (5 s timeout) before committing deletion; restore focus after delete             |
+| 6.27 | Fix theme-menu ARIA                                  | Dynamic `aria-label` + `aria-haspopup` on toggle button; `role="menuitemradio"` + `aria-checked` per menu item |
+| 6.28 | Use shared `IconButton` consistently                 | Replace raw MUI `IconButton` imports in `ActivePage`, `AppLayout`, `SearchPage` with shared wrapper           |
+
+### Medium findings
+
+| #    | Deliverable                                          | Details                                                                                                      |
+| ---- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| 6.29 | Fix timezone bug in `upcoming` filter                | Replace `normalizeDateKey(new Date().toISOString())` with `toDateKey(new Date())` in `task.db.ts`            |
+| 6.30 | Fix `createTask` order race condition                | Wrap `getMinOrder()` + `add()` in a Dexie transaction in `store.ts`                                          |
+| 6.31 | Add CSS fallback for `color-mix`                     | Provide a fallback `backgroundColor` before the `color-mix(in srgb, ...)` declaration in `theme.ts`          |
+| 6.32 | Fix `MuiCard` border-radius (16 → 12 px)             | Change `MuiCard` override to `borderRadius: 12` to match the design guide card spec                          |
+| 6.33 | Fix dark-mode `text.secondary` contrast              | Lighten `text.secondary` to `#AEA9B4` (≥ 4.5:1 on `#1C1B1F`) for WCAG AA compliance                        |
+| 6.34 | Introduce `IsoDateString` branded type               | Add `type IsoDateString = string & { readonly __brand: 'IsoDate' }` in `shared/lib/date.ts`; use for all date fields |
+| 6.35 | Rename `toIsoDate` → `toIsoDateTime`                 | The function returns a full datetime string, not a date-only string; rename to avoid confusion                |
+| 6.36 | Move `buildOrderUpdates` to `entities/task/model/`   | Extract to `entities/task/model/order.ts` for independent testability; remove from `TaskList`                 |
+| 6.37 | Extract `VISUALLY_HIDDEN_SX` constant                | Deduplicate the three copy-pasted visually-hidden CSS objects in `EditTaskForm` to `shared/ui/sx.ts`          |
+| 6.38 | Expand test coverage                                 | Add tests for: `deleteTask`, `setFilter`, `updatedAt` mutation, `bulkUpdateOrder`, `getMinOrder` on empty table, `searchByTitle` case-insensitivity, delete button interaction, blur-save in `TaskCard`, empty-state rendering |
+
+### Low findings
+
+| #    | Deliverable                                          | Details                                                                                                      |
+| ---- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| 6.39 | Fix `TaskNav` active-tab fallback                    | Use `value={activeTab === -1 ? false : activeTab}` so no tab appears selected on non-list routes             |
+| 6.40 | Remove / consolidate dead shared UI wrappers         | Audit `Input.tsx`, `Layout.tsx`, `Modal.tsx`, `Button.tsx`, `IconButton.tsx` — remove unused ones or enforce consistent usage |
+| 6.41 | Remove dead `updateOrder` export                     | `taskDb.updateOrder` is never called; remove or document as reserved                                         |
+| 6.42 | Remove or expose `TaskFilterKey 'all'`               | Either surface the "All" filter in the UI or remove it from `FILTERS` and `TaskFilterKey` to avoid dead code |
+| 6.43 | Fix `formatDate` raw-value echo on invalid date      | Return `''` instead of echoing the raw string when `normalizeDateKey` returns empty                           |
+| 6.44 | Fix fake-indexeddb not reset between test files      | Add a global `beforeEach` in `test/setup.ts` that deletes and re-opens the DB for a clean slate per test     |
+| 6.45 | Fix PWA silent reload UX                             | Move SW logic to `app/lib/sw.ts`; show a non-blocking snackbar before calling `updateSW(true)`               |
+
+**Exit criteria:** All critical and high findings are resolved. Test suite passes with no regressions. No FSD layer violations remain. WCAG 2.1 AA is met for all new and modified components.
