@@ -1,10 +1,14 @@
 import { useMemo, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { TaskCard } from '../../../entities/task/ui/TaskCard'
 import { taskDb } from '../../../entities/task/api/task.db'
-import { Typography, Box, Paper, Chip, TextField, IconButton, InputAdornment, List } from '@mui/material'
+import { TaskList } from '../../../entities/task/ui/TaskList'
+import { Typography, Box, Paper, Chip, TextField, IconButton, InputAdornment } from '@mui/material'
 import ClearIcon from '@mui/icons-material/Clear'
 import SearchIcon from '@mui/icons-material/Search'
+import { TaskCard } from '../../../entities/task/ui/TaskCard'
+import { CompleteCheckbox } from '../../../features/complete-task/ui/CompleteCheckbox'
+import { EditTaskForm } from '../../../features/edit-task/ui/EditTaskForm'
+import { DeleteButton } from '../../../features/delete-task/ui/DeleteButton'
 
 export function SearchPage() {
   const [query, setQuery] = useState('')
@@ -66,11 +70,24 @@ export function SearchPage() {
               No tasks match that search.
             </Typography>
           ) : results ? (
-            <List disablePadding>
-              {results.map((task) => (
-                <TaskCard key={task.id} task={task} />
+            <TaskList
+              items={results.map((task) => (
+                <TaskCard
+                  key={task.id}
+                  task={task}
+                  actions={
+                    <CompleteCheckbox
+                      taskId={task.id}
+                      completed={task.completed}
+                      label={task.title}
+                    />
+                  }
+                  content={<EditTaskForm task={task} />}
+                  endActions={<DeleteButton taskId={task.id} />}
+                />
               ))}
-            </List>
+              emptyMessage="No tasks match that search."
+            />
           ) : (
             <Typography variant="body1" color="text.secondary" align="center" sx={{ py: 4 }}>
               Searching tasks...

@@ -1,17 +1,18 @@
-import type { HTMLAttributes, Ref } from 'react'
+import type { HTMLAttributes, Ref, ReactNode } from 'react'
 import type { Task } from '../model/types'
-import { CompleteCheckbox } from '../../../features/complete-task/ui/CompleteCheckbox'
-import { DeleteButton } from '../../../features/delete-task/ui/DeleteButton'
-import { EditTaskForm } from '../../../features/edit-task/ui/EditTaskForm'
-import { Box, Paper } from '@mui/material'
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator'
+import { Box, IconButton, Paper } from '@mui/material'
 
 type TaskCardProps = {
   task: Task
   isDragging?: boolean
-  dragHandleProps?: HTMLAttributes<HTMLDivElement> & { ref?: Ref<HTMLDivElement> }
+  dragHandleProps?: HTMLAttributes<HTMLButtonElement> & { ref?: Ref<HTMLButtonElement> }
+  actions?: ReactNode
+  content?: ReactNode
+  endActions?: ReactNode
 }
 
-export function TaskCard({ task, isDragging = false, dragHandleProps }: TaskCardProps) {
+export function TaskCard({ task, isDragging = false, dragHandleProps, actions, content, endActions }: TaskCardProps) {
   const dragHandleStyles = dragHandleProps
     ? {
         touchAction: 'none',
@@ -21,11 +22,11 @@ export function TaskCard({ task, isDragging = false, dragHandleProps }: TaskCard
         cursor: isDragging ? 'grabbing' : 'grab',
       }
     : {}
+  const { ref: dragHandleRef, color: _color, ...dragHandleAttributes } = dragHandleProps ?? {}
 
   return (
     <Paper
       className="task-card"
-      {...dragHandleProps}
       variant="outlined"
       sx={[
         {
@@ -45,17 +46,31 @@ export function TaskCard({ task, isDragging = false, dragHandleProps }: TaskCard
           transform: 'translateY(-2px)',
           boxShadow: (theme) => theme.shadows[6],
         },
-        dragHandleStyles,
       ]}
     >
+      {dragHandleProps ? (
+        <IconButton
+          {...dragHandleAttributes}
+          ref={dragHandleRef}
+          aria-label={`Drag to reorder ${task.title}`}
+          aria-roledescription="sortable"
+          size="small"
+          sx={{
+            mr: 0.5,
+            ...dragHandleStyles,
+          }}
+        >
+          <DragIndicatorIcon fontSize="small" />
+        </IconButton>
+      ) : null}
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        <CompleteCheckbox taskId={task.id} completed={task.completed} label={task.title} />
+        {actions}
       </Box>
       <Box sx={{ flex: 1, minWidth: 0 }}>
-        <EditTaskForm task={task} />
+        {content}
       </Box>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        <DeleteButton taskId={task.id} />
+        {endActions}
       </Box>
     </Paper>
   )

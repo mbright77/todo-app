@@ -1,13 +1,6 @@
-export type Task = {
-  id: string
-  title: string
-  description: string | null
-  completed: boolean
-  dueDate: string | null
-  order: number
-  createdAt: string
-  updatedAt: string
-}
+import type { TaskRecord } from '../../../shared/lib/db'
+
+export type Task = TaskRecord & { order: number }
 
 export type TaskFilterKey = 'all' | 'active' | 'today' | 'completed' | 'upcoming'
 

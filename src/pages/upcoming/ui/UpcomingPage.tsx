@@ -1,4 +1,4 @@
-import { TaskList } from '../../../entities/task/ui/TaskList'
+import { ReorderableTaskList } from '../../../features/reorder-tasks/ui/ReorderableTaskList'
 import { Typography, Box, Paper, Chip } from '@mui/material'
 
 export function UpcomingPage() {
@@ -17,10 +17,7 @@ export function UpcomingPage() {
       </Box>
 
       <Paper variant="outlined" sx={{ p: { xs: 2, sm: 3 }, borderRadius: 4 }}>
-        <TaskList
-          filterKey="upcoming"
-          emptyMessage="No upcoming tasks yet."
-        />
+        <ReorderableTaskList filterKey="upcoming" emptyMessage="No upcoming tasks yet." />
       </Paper>
     </Box>
   )

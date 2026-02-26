@@ -1,8 +1,18 @@
 import Dexie, { type Table } from 'dexie'
-import type { Task } from '../../entities/task/model/types'
+
+export type TaskRecord = {
+  id: string
+  title: string
+  description: string | null
+  completed: boolean
+  dueDate: string | null
+  order?: number
+  createdAt: string
+  updatedAt: string
+}
 
 export class TodoDatabase extends Dexie {
-  tasks!: Table<Task, string>
+  tasks!: Table<TaskRecord, string>
 
   constructor() {
     super('todo-app')

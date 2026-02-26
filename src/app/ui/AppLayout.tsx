@@ -15,6 +15,7 @@ export function AppLayout() {
   const navigate = useNavigate()
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const createTaskDialogTitleId = 'create-task-dialog-title'
 
   const handleClose = () => setIsAddDialogOpen(false)
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => setAnchorEl(event.currentTarget)
@@ -91,8 +92,8 @@ export function AppLayout() {
         <AddIcon />
       </Fab>
 
-      <Dialog open={isAddDialogOpen} onClose={handleClose} fullWidth maxWidth="sm">
-        <DialogTitle>Create New Task</DialogTitle>
+      <Dialog open={isAddDialogOpen} onClose={handleClose} fullWidth maxWidth="sm" aria-labelledby={createTaskDialogTitleId}>
+        <DialogTitle id={createTaskDialogTitleId}>Create New Task</DialogTitle>
         <DialogContent sx={{ pt: 1 }}>
           <Box sx={{ mt: 1 }}>
             <CreateTaskForm 

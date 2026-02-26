@@ -3,6 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import { TaskCard } from './TaskCard'
 import { taskDb } from '../api/task.db'
 import type { Task } from '../model/types'
+import { CompleteCheckbox } from '../../../features/complete-task/ui/CompleteCheckbox'
 
 const buildTask = (overrides: Partial<Task> = {}): Task => ({
   id: overrides.id ?? 'task-' + Math.random().toString(36).slice(2, 10),
@@ -28,9 +29,13 @@ describe('TaskCard', () => {
     const task = buildTask({ title: 'Buy bread' })
     await taskDb.add(task)
 
-    render(<TaskCard task={task} />)
+    render(
+      <TaskCard
+        task={task}
+        actions={<CompleteCheckbox taskId={task.id} completed={task.completed} label={task.title} />}
+      />
+    )
 
-    expect(screen.getByLabelText('Task title')).toHaveValue('Buy bread')
     const checkbox = screen.getByLabelText('Mark Buy bread as completed')
     fireEvent.click(checkbox)
 

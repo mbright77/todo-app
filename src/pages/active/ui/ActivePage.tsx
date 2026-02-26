@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { TaskList } from '../../../entities/task/ui/TaskList'
+import { ReorderableTaskList } from '../../../features/reorder-tasks/ui/ReorderableTaskList'
 import { IconButton, Typography, Box, Paper } from '@mui/material'
 import FilterListIcon from '@mui/icons-material/FilterList'
 import { TaskFilters } from '../../../features/search-tasks/ui/TaskFilters'
@@ -27,9 +27,7 @@ export function ActivePage() {
 
       <Paper variant="outlined" sx={{ p: { xs: 2, sm: 3 }, borderRadius: 4 }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-          <TaskList
-            emptyMessage="No active tasks. Use the plus button below to add one."
-          />
+          <ReorderableTaskList emptyMessage="No active tasks. Use the plus button below to add one." />
         </Box>
       </Paper>
     </Box>
