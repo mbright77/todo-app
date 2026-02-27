@@ -18,6 +18,7 @@ The app uses MUI's `colorSchemes` (light/dark) with MD3-approximated tokens.
 - **Secondary:** `#CCC2DC`
 - **Background:** `#1C1B1F`
 - **Surface:** `#1C1B1F`
+- **text.secondary:** `#AEA9B4` (≥ 4.5:1 contrast on `#1C1B1F`, WCAG AA)
 
 ## Typography
 
@@ -37,16 +38,24 @@ The app uses the **Roboto** font family bundled via `@fontsource/roboto`.
 - **Dialog Radius:** `28px`
 - **Pill Radius:** `999px` (Buttons, Chips, Tabs)
 
+> Cards use `borderRadius: 12` in the MUI theme override (`MuiCard`). Do not use 16 px for cards.
+
 ### Surface Elevation
 The app uses **Tonal Elevation** where possible (surface color tinting) combined with subtle shadows. Outlined variants are preferred for a clean, modern look.
 
 ## UX & Accessibility Rules
 
-1. **Focus Management:** All dialogs use focus trapping. The "Add Task" disclosure panel returns focus to the toggle button on close.
+1. **Focus Management:** All dialogs use focus trapping. The "Add Task" disclosure panel returns focus to the toggle button on close. The delete button receives focus back when an undo action is taken.
 2. **Keyboard Navigation:** Every action (Add, Edit, Delete, Filter) is accessible via keyboard. Escape key closes dialogs and the disclosure panel.
 3. **Labels:** All form inputs use MUI `TextField` labels or explicit `aria-label` for icon-only buttons.
 4. **Motion:** Use MUI `Collapse` and `Fade` for entry/exit animations. All animations respect the `prefers-reduced-motion` system setting.
-5. **Dark Mode:** Supports system-level and manual dark mode toggling via the `AppBar` toggle.
+5. **Dark Mode:** Supports system-level and manual dark mode toggling via the `AppBar` toggle. The theme menu uses `role="menuitemradio"` with `aria-checked` per item.
+6. **Delete Undo:** Deleting a task shows a Snackbar ("Task deleted / Undo") for 5 seconds before the delete is committed. Clicking Undo cancels the delete and restores focus to the delete button.
+7. **Live Regions:** Search result counts are wrapped in `role="status" aria-live="polite"` so screen readers announce updates without interrupting.
+
+## FAB Positioning
+
+The create-task FAB uses `calc(32px + env(safe-area-inset-bottom))` and `calc(16px + env(safe-area-inset-right))` for its bottom/right offsets so it does not overlap the home indicator or rounded corners on notched/iOS devices.
 
 ## Task Reordering
 

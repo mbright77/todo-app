@@ -132,7 +132,7 @@ working, testable increment of the application.
 
 **Rules:** No automatic git commits or pushes are allowed unless explicitly asked for by the user. Each single commit must be asked for. All UI changes must follow the [UI Design Guide](./DESIGN_GUIDE.md).
 
-**Status:** Not started.
+**Status:** Complete. All 45 findings resolved and verified.
 
 ### Critical findings
 
@@ -200,3 +200,11 @@ working, testable increment of the application.
 | 6.45 | Fix PWA silent reload UX                             | Move SW logic to `app/lib/sw.ts`; show a non-blocking snackbar before calling `updateSW(true)`               |
 
 **Exit criteria:** All critical and high findings are resolved. Test suite passes with no regressions. No FSD layer violations remain. WCAG 2.1 AA is met for all new and modified components.
+
+### Phase 6 completion notes
+
+- All 45 deliverables (6.1–6.45) implemented and verified with a passing test suite (33 tests).
+- Key structural changes: `TaskNav` moved to `app/ui/`; `ThemeToggle` extracted to `features/switch-theme/`; `CreateTaskFab` extracted to `features/create-task/`; `FilterTasksDialog` extracted to `features/filter-tasks/`; `buildOrderUpdates` moved to `entities/task/model/order.ts`; `buildTask` factory extracted to `entities/task/model/task.factory.ts`; `TASK_FILTERS` and `FILTER_DIALOG_KEYS` centralised in `shared/config/constants.ts`.
+- Dead code removed: `shared/ui/Input.tsx`, `shared/ui/Layout.tsx`, `taskDb.updateOrder`, `TaskFilterKey 'all'`, the `'all'` filter entry.
+- SW registration moved from inline `main.tsx` to `app/lib/sw.ts`; update notification wired through `app/model/swUpdate.ts` Zustand store and `app/ui/SwUpdateSnackbar.tsx` (non-blocking snackbar with Reload action).
+- Global test isolation: `test/setup.ts` now resets IndexedDB and restores real timers before every test.

@@ -21,7 +21,7 @@ Single user on one device.
 - Create tasks
 - Complete tasks
 - Edit tasks
-- Delete tasks
+- Delete tasks (with 5-second undo)
 - Task lists (Active, Upcoming, Completed)
 - Search
 - Global ordering (drag to reorder)
@@ -39,7 +39,7 @@ Platform: PWA
 Storage: IndexedDB (Dexie)
 
 ## PWA Updates
-The installed PWA checks for updates on load and will silently refresh to apply new versions.
+When a new version is available the app shows a non-blocking snackbar with a Reload action. The user must confirm before the update is applied.
 
 ## Non-Goals
 - No user accounts

@@ -58,65 +58,82 @@ Within each layer, code is grouped into **slices** (domain areas) and **segments
 ```
 src/
 ├── app/                          # Application shell
-│   ├── providers/                #   Context / provider wrappers
+│   ├── lib/
+│   │   └── sw.ts                 #   Service worker registration + update wiring
+│   ├── model/
+│   │   └── swUpdate.ts           #   Zustand slice for SW update notification state
+│   ├── ui/
+│   │   ├── AppLayout.tsx         #   Root layout: AppBar, nav, FAB, update snackbar
+│   │   ├── TaskNav.tsx           #   Tab navigation (app-specific routes)
+│   │   └── SwUpdateSnackbar.tsx  #   Non-blocking "update available" snackbar
 │   ├── router.tsx                #   Route definitions
-│   ├── global.css                #   CSS reset, design tokens
-│   └── index.tsx                 #   Entry point, mounts <App />
+│   ├── theme.ts                  #   MUI theme (MD3 tokens, dark mode)
+│   └── global.css                #   CSS reset, design tokens
 │
 ├── pages/                        # Route-level pages
-│   ├── active/                   #   "Active" task list view
-│   │   └── ui/
-│   │       └── ActivePage.tsx
-│   ├── upcoming/                 #   "Upcoming" task list view
-│   │   └── ui/
-│   │       └── UpcomingPage.tsx
-│   ├── completed/                #   "Completed" task list view
-│   │   └── ui/
-│   │       └── CompletedPage.tsx
-│   └── search/                   #   Search results view
-│       └── ui/
-│           └── SearchPage.tsx
+│   ├── active/ui/ActivePage.tsx
+│   ├── upcoming/ui/UpcomingPage.tsx
+│   ├── completed/ui/CompletedPage.tsx
+│   └── search/ui/SearchPage.tsx
 │
 ├── features/                     # User-facing interactions
-├──   create-task/              #   Create a new task
+│   ├── create-task/
 │   │   └── ui/
-│   │       └── CreateTaskForm.tsx
-│   ├── edit-task/                #   Edit an existing task
+│   │       ├── CreateTaskForm.tsx  #   Inline create form (disclosure panel)
+│   │       └── CreateTaskFab.tsx   #   FAB + dialog wrapper with safe-area insets
+│   ├── edit-task/
 │   │   └── ui/
-│   │       └── EditTaskForm.tsx
-│   ├── complete-task/            #   Toggle task completion
+│   │       └── EditTaskForm.tsx    #   Debounced blur-save inline editor
+│   ├── complete-task/
 │   │   └── ui/
 │   │       └── CompleteCheckbox.tsx
-│   ├── delete-task/              #   Delete a task
+│   ├── delete-task/
 │   │   └── ui/
-│   │       └── DeleteButton.tsx
-│   └── search-tasks/             #   Task filtering logic
+│   │       └── DeleteButton.tsx    #   Delete with 5 s undo snackbar + focus restore
+│   ├── filter-tasks/
+│   │   └── ui/
+│   │       └── FilterTasksDialog.tsx  #   Filter picker dialog
+│   ├── reorder-tasks/
+│   │   └── ui/
+│   │       └── ReorderableTaskList.tsx
+│   ├── search-tasks/
+│   │   └── ui/
+│   │       └── SearchBar.tsx
+│   └── switch-theme/
 │       └── ui/
-│           └── TaskFilters.tsx   #     Filter dialog
+│           └── ThemeToggle.tsx     #   Theme menu with full ARIA (menuitemradio)
 │
 ├── entities/                     # Domain objects
-│   └── task/                     #   Task entity
+│   └── task/
 │       ├── ui/
-│       │   ├── TaskCard.tsx      #     Single task display
-│       │   └── TaskList.tsx      #     List of tasks
+│       │   ├── TaskCard.tsx
+│       │   └── TaskList.tsx
 │       ├── model/
-│       │   ├── types.ts          #     Task interface, enums
-│       │   └── store.ts          #     Zustand store for tasks
+│       │   ├── types.ts          #   Task, TaskFilter, TaskFilterKey
+│       │   ├── store.ts          #   Zustand store (filter, CRUD, reorder actions)
+│       │   ├── task.factory.ts   #   buildTask() factory
+│       │   └── order.ts          #   buildOrderUpdates() helper
 │       └── api/
-│           └── task.db.ts        #     Dexie table definition & queries
+│           └── task.db.ts        #   Dexie queries; createWithMinOrder transaction
 │
-└── shared/                       # Reusable, domain-agnostic code
-    ├── ui/
-    │   ├── Button.tsx
-    │   ├── Input.tsx
-    │   ├── IconButton.tsx
-    │   └── Layout.tsx
-    ├── lib/
-    │   ├── db.ts                 #   Dexie database instance
-    │   ├── date.ts               #   Date formatting helpers
-    │   └── id.ts                 #   ID generation (crypto.randomUUID)
-    └── config/
-        └── constants.ts          #   App-wide constants
+├── shared/
+│   ├── ui/
+│   │   ├── Button.tsx
+│   │   ├── IconButton.tsx        #   forwardRef wrapper around MUI IconButton
+│   │   ├── Modal.tsx
+│   │   ├── ErrorBoundary.tsx
+│   │   └── sx.ts                 #   Shared MUI sx constants (VISUALLY_HIDDEN_SX)
+│   ├── lib/
+│   │   ├── db.ts                 #   Dexie database instance + TaskRecord type
+│   │   ├── date.ts               #   IsoDateString branded type, toIsoDateTime,
+│   │   │                         #   toDateKey, normalizeDateKey, isToday, formatDate
+│   │   └── id.ts                 #   ID generation (crypto.randomUUID)
+│   └── config/
+│       └── constants.ts          #   APP_NAME, TASK_FILTERS, FILTER_DIALOG_KEYS
+│
+└── test/
+    └── setup.ts                  # Global test setup: jest-dom, fake-indexeddb,
+                                  # beforeEach IDB reset + real-timer restore
 ```
 
 ---
@@ -141,30 +158,41 @@ All data lives in a single IndexedDB database managed by Dexie.js.
 #### Dexie Schema
 
 ```typescript
-import Dexie, { type Table } from "dexie";
+// shared/lib/db.ts
+import Dexie, { type Table } from 'dexie'
 
-export interface Task {
-  id: string;
-  title: string;
-  description: string | null;
-  completed: boolean;
-  dueDate: string | null;
-  createdAt: string;
-  updatedAt: string;
+export type TaskRecord = {
+  id: string
+  title: string
+  description: string | null
+  completed: boolean
+  dueDate: string | null
+  order?: number          // undefined on v1 records before migration
+  createdAt: string
+  updatedAt: string
 }
 
 class TodoDatabase extends Dexie {
-  tasks!: Table<Task, string>;
+  tasks!: Table<TaskRecord, string>
 
   constructor() {
-    super("todo-app");
-    this.version(1).stores({
-      tasks: "id, order, title, completed, dueDate, createdAt",
-    });
+    super('todo-app')
+    this.version(1).stores({ tasks: 'id, title, completed, dueDate, createdAt' })
+    this.version(2)
+      .stores({ tasks: 'id, order, title, completed, dueDate, createdAt' })
+      .upgrade(async (tx) => {
+        // backfill order for existing tasks using createdAt order
+        const tasks = await tx.table('tasks').orderBy('createdAt').reverse().toArray()
+        await Promise.all(
+          tasks.map((task, index) =>
+            tx.table('tasks').update(task.id, { order: task.order ?? index })
+          )
+        )
+      })
   }
 }
 
-export const db = new TodoDatabase();
+export const db = new TodoDatabase()
 ```
 
 ### Index Rationale
@@ -206,10 +234,12 @@ This means Dexie is the **source of truth**. Zustand is used for ephemeral UI st
 
 ## PWA Update Behavior
 
-GitHub Pages deployments are picked up by the installed PWA on next launch:
+When a new service worker is available the app surfaces a non-blocking snackbar ("A new version is available / Reload") rather than silently reloading.
 
-- Service worker uses `skipWaiting` and `clientsClaim`.
-- App calls `update()` on load and silently reloads when an update is available.
+- `app/lib/sw.ts` — calls `registerSW` and on `onNeedRefresh` signals `useSwUpdateStore`.
+- `app/model/swUpdate.ts` — Zustand slice holding `updateAvailable` + the `applyUpdate` callback.
+- `app/ui/SwUpdateSnackbar.tsx` — renders the snackbar; user must click Reload to apply the update.
+- Service worker uses `skipWaiting` and `clientsClaim`, so once the user reloads the new version activates immediately.
 
 ## Key Constraints
 
