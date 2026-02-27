@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useTaskStore } from '../../../entities/task/model/store'
 import { IconButton } from '../../../shared/ui/IconButton'
 import DeleteIcon from '@mui/icons-material/Delete'
-import { Snackbar, Button } from '@mui/material'
+import { Snackbar, Button, Alert } from '@mui/material'
 
 type DeleteButtonProps = {
   taskId: string
@@ -83,14 +83,20 @@ export function DeleteButton({ taskId }: DeleteButtonProps) {
         open={pendingDelete}
         autoHideDuration={UNDO_TIMEOUT_MS}
         onClose={handleSnackbarClose}
-        message="Task deleted"
-        action={
-          <Button color="secondary" size="small" onClick={handleUndo}>
-            Undo
-          </Button>
-        }
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      />
+      >
+        <Alert
+          severity="info"
+          variant="filled"
+          action={
+            <Button color="inherit" size="small" onClick={handleUndo}>
+              Undo
+            </Button>
+          }
+        >
+          Task deleted
+        </Alert>
+      </Snackbar>
     </>
   )
 }
