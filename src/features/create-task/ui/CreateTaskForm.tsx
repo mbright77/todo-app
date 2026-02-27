@@ -17,37 +17,63 @@ export function CreateTaskForm({
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [dueDate, setDueDate] = useState('')
-  
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
   const titleInputRef = useRef<HTMLInputElement>(null)
   const toggleButtonRef = useRef<HTMLButtonElement>(null)
   
   const createTask = useTaskStore((state) => state.createTask)
 
   useEffect(() => {
-    if (isExpanded) {
+    // Only auto-focus when used standalone (not inside a Dialog — Dialog manages
+    // its own focus trap and the setTimeout races with MUI's aria-hidden logic,
+    // causing the "Blocked aria-hidden on focused element" console warning).
+    if (isExpanded && !initiallyExpanded) {
       const timer = setTimeout(() => {
         titleInputRef.current?.focus()
       }, 100)
       return () => clearTimeout(timer)
     }
-  }, [isExpanded])
+  }, [isExpanded, initiallyExpanded])
 
-  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    if (!title.trim()) return
-    await createTask({ title, description, dueDate: dueDate.trim() || undefined })
+  const resetForm = () => {
     setTitle('')
     setDescription('')
     setDueDate('')
-    setIsExpanded(false)
-    toggleButtonRef.current?.focus()
-    onSuccess?.()
+  }
+
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    if (!title.trim() || isSubmitting) return
+    setIsSubmitting(true)
+    try {
+      await createTask({ title, description, dueDate: dueDate.trim() || undefined })
+      resetForm()
+      if (initiallyExpanded) {
+        // Inside a dialog: let the parent close the dialog cleanly.
+        onSuccess?.()
+      } else {
+        // Standalone: collapse the inline form and restore focus to the toggle button.
+        setIsExpanded(false)
+        toggleButtonRef.current?.focus()
+        onSuccess?.()
+      }
+    } catch (error) {
+      console.error('Failed to create task:', error)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleCancel = () => {
-    setIsExpanded(false)
-    toggleButtonRef.current?.focus()
-    onCancel?.()
+    resetForm()
+    if (initiallyExpanded) {
+      onCancel?.()
+    } else {
+      setIsExpanded(false)
+      toggleButtonRef.current?.focus()
+      onCancel?.()
+    }
   }
 
 
@@ -90,6 +116,7 @@ export function CreateTaskForm({
               onChange={(event) => setTitle(event.target.value)}
               placeholder="Add a task"
               required
+              autoFocus={initiallyExpanded}
               slotProps={{
                 input: {
                   sx: { bgcolor: 'background.paper' }
@@ -130,7 +157,7 @@ export function CreateTaskForm({
               }}
             />
             <Box sx={{ display: 'flex', gap: 1 }}>
-              <Button type="submit" startIcon={<AddIcon />}>
+              <Button type="submit" startIcon={<AddIcon />} disabled={isSubmitting}>
                 Add
               </Button>
               <Button variant="text" onClick={handleCancel}>

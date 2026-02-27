@@ -6,7 +6,7 @@ export type TaskRecord = {
   description: string | null
   completed: boolean
   dueDate: string | null
-  order?: number
+  order: number
   createdAt: string
   updatedAt: string
 }

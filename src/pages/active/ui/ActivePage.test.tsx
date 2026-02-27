@@ -44,4 +44,14 @@ describe('ActivePage', () => {
       expect(screen.getByDisplayValue('Due today')).toBeInTheDocument()
     })
   })
+
+  it('renders active tasks visibly in the list', async () => {
+    await taskDb.add(buildTask({ title: 'Visible task' }))
+
+    render(<ActivePage />)
+
+    await waitFor(() => {
+      expect(screen.getByDisplayValue('Visible task')).toBeVisible()
+    })
+  })
 })

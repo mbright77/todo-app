@@ -1,5 +1,6 @@
 import { describe, expect, it, beforeEach, afterEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { TaskCard } from './TaskCard'
 import { taskDb } from '../api/task.db'
 import type { Task } from '../model/types'
@@ -36,10 +37,13 @@ describe('TaskCard', () => {
       />
     )
 
+    const user = userEvent.setup()
     const checkbox = screen.getByLabelText('Mark Buy bread as completed')
-    fireEvent.click(checkbox)
+    await user.click(checkbox)
 
-    const [updated] = await taskDb.getAll()
-    expect(updated.completed).toBe(true)
+    await waitFor(async () => {
+      const [updated] = await taskDb.getAll()
+      expect(updated.completed).toBe(true)
+    })
   })
 })

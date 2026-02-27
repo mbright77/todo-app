@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { taskDb } from '../../../entities/task/api/task.db'
 import { TaskList } from '../../../entities/task/ui/TaskList'
@@ -15,6 +15,7 @@ export function SearchPage() {
   const [query, setQuery] = useState('')
   const trimmedQuery = query.trim()
   const results = useLiveQuery(() => taskDb.searchByTitle(trimmedQuery), [trimmedQuery])
+  const searchInputRef = useRef<HTMLInputElement>(null)
 
   const totalLabel = useMemo(() => {
     if (!results) return 'Searching'
@@ -49,6 +50,7 @@ export function SearchPage() {
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search tasks by title"
+            inputRef={searchInputRef}
             slotProps={{
               input: {
                 startAdornment: (
@@ -59,7 +61,11 @@ export function SearchPage() {
                 endAdornment: trimmedQuery ? (
                   <InputAdornment position="end">
                     <IconButton
-                      onClick={() => setQuery('')}
+                      onClick={() => {
+                        setQuery('')
+                        // B13 — return focus to the search input after clearing
+                        searchInputRef.current?.focus()
+                      }}
                       edge="end"
                       aria-label="Clear search"
                     >

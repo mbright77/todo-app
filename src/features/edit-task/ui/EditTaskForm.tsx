@@ -27,6 +27,17 @@ export function EditTaskForm({ task }: EditTaskFormProps) {
   // 6.9 — coalesce rapid onBlur saves (e.g. title → description focus shift).
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
+  // B7 — clear any pending save timer on unmount so a stale write never fires
+  // after the component is gone.
+  useEffect(() => {
+    return () => {
+      if (saveTimerRef.current !== null) {
+        clearTimeout(saveTimerRef.current)
+        saveTimerRef.current = null
+      }
+    }
+  }, [])
+
   const scheduleSave = (latestTitle: string, latestDescription: string, latestDueDate: string) => {
     if (saveTimerRef.current !== null) clearTimeout(saveTimerRef.current)
     saveTimerRef.current = setTimeout(async () => {
@@ -43,11 +54,15 @@ export function EditTaskForm({ task }: EditTaskFormProps) {
         latestDescription !== (task.description ?? '') ||
         latestDueDate !== (task.dueDate ?? '')
       ) {
-        await updateTask(task.id, {
-          title: trimmedTitle,
-          description: latestDescription.trim() || null,
-          dueDate: latestDueDate.trim() || null,
-        })
+        try {
+          await updateTask(task.id, {
+            title: trimmedTitle,
+            description: latestDescription.trim() || null,
+            dueDate: latestDueDate.trim() || null,
+          })
+        } catch (error) {
+          console.error('Failed to save task edits:', error)
+        }
       }
     }, 50)
   }

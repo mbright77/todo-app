@@ -39,7 +39,7 @@ export function ThemeToggle() {
         onClick={handleOpen}
         aria-label={currentLabel}
         aria-haspopup="menu"
-        aria-expanded={open}
+        aria-expanded={open || undefined}
         aria-controls={open ? 'theme-menu' : undefined}
       >
         <CurrentIcon />

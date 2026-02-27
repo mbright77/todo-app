@@ -56,7 +56,7 @@ function SortableTaskItem({ task, isActiveDrag, ...collapseProps }: SortableTask
   }
 
   return (
-    <Collapse {...collapseProps}>
+    <Collapse {...collapseProps} in timeout="auto">
       <Box
         ref={setNodeRef}
         style={style}
@@ -94,6 +94,7 @@ export function ReorderableTaskList({ filterKey, emptyMessage }: ReorderableTask
   const tasks = useLiveQuery(() => taskDb.getByFilter(activeFilter), [activeFilter])
   const reorderTasks = useTaskStore((state) => state.reorderTasks)
   const [activeDragId, setActiveDragId] = useState<string | null>(null)
+  const [isReordering, setIsReordering] = useState(false)
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 8 } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 500, tolerance: 10 } })
@@ -109,6 +110,7 @@ export function ReorderableTaskList({ filterKey, emptyMessage }: ReorderableTask
   )
 
   const onDragStart = (event: DragStartEvent) => {
+    if (isReordering) return
     setActiveDragId(String(event.active.id))
   }
 
@@ -118,10 +120,13 @@ export function ReorderableTaskList({ filterKey, emptyMessage }: ReorderableTask
     if (!over || active.id === over.id) return
 
     const updates = buildOrderUpdates(tasks ?? [], String(active.id), String(over.id))
+    setIsReordering(true)
     try {
       await reorderTasks(updates)
     } catch (error) {
       console.error('Failed to reorder tasks:', error)
+    } finally {
+      setIsReordering(false)
     }
   }
 

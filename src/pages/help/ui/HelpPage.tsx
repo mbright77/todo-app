@@ -9,7 +9,13 @@ export function HelpPage() {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        <IconButton aria-label="Back" onClick={() => navigate(-1)}>
+        <IconButton aria-label="Back" onClick={() => {
+          if (window.history.length > 1) {
+            navigate(-1)
+          } else {
+            navigate('/', { replace: true })
+          }
+        }}>
           <ArrowBackIcon />
         </IconButton>
         <Box sx={{ minWidth: 0 }}>

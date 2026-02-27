@@ -9,7 +9,11 @@ export function SwUpdateSnackbar() {
   const { updateAvailable, applyUpdate, dismiss } = useSwUpdateStore()
 
   const handleReload = () => {
-    applyUpdate?.()
+    if (applyUpdate) {
+      applyUpdate()
+    } else {
+      window.location.reload()
+    }
   }
 
   const handleClose = (_event: React.SyntheticEvent | Event, reason?: string) => {

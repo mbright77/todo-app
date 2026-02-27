@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTaskStore } from '../../../entities/task/model/store'
 import { IconButton } from '../../../shared/ui/IconButton'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -16,11 +16,31 @@ export function DeleteButton({ taskId }: DeleteButtonProps) {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
 
+  // B3 — clear the timer on unmount so deletion never fires after the component
+  // is gone (e.g. user navigates away before the 5 s undo window expires).
+  useEffect(() => {
+    return () => {
+      if (timerRef.current !== null) {
+        clearTimeout(timerRef.current)
+        timerRef.current = null
+      }
+    }
+  }, [])
+
+  const commitDelete = async () => {
+    setPendingDelete(false)
+    try {
+      await deleteTask(taskId) // B4 — await so errors are caught
+    } catch (error) {
+      console.error('Failed to delete task:', error)
+    }
+  }
+
   const handleDeleteClick = () => {
     setPendingDelete(true)
     timerRef.current = setTimeout(() => {
-      setPendingDelete(false)
-      deleteTask(taskId)
+      timerRef.current = null
+      void commitDelete()
     }, UNDO_TIMEOUT_MS)
   }
 
@@ -35,11 +55,17 @@ export function DeleteButton({ taskId }: DeleteButtonProps) {
   }
 
   const handleSnackbarClose = (_event: React.SyntheticEvent | Event, reason?: string) => {
-    if (reason === 'timeout') {
-      // Timer has already fired — nothing to do here; state is cleared by the timer callback
-    }
     // Do not close on clickaway so the user can still undo
     if (reason === 'clickaway') return
+    if (reason === 'timeout') {
+      // B5 — MUI fires onClose at UNDO_TIMEOUT_MS; cancel our own timer and
+      // commit the deletion here so there is only one code path that deletes.
+      if (timerRef.current !== null) {
+        clearTimeout(timerRef.current)
+        timerRef.current = null
+      }
+      void commitDelete()
+    }
   }
 
   return (
