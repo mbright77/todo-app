@@ -1,9 +1,9 @@
 import { db } from '../../../shared/lib/db'
 import type { Task, TaskFilterKey } from '../model/types'
-import { isToday, normalizeDateKey } from '../../../shared/lib/date'
+import { isToday, normalizeDateKey, toDateKey } from '../../../shared/lib/date'
 
 const sortByOrder = (list: Task[]) =>
-  list.sort((a, b) => {
+  [...list].sort((a, b) => {
     if (a.order !== b.order) return a.order - b.order
     return b.createdAt.localeCompare(a.createdAt)
   })
@@ -14,17 +14,14 @@ export const taskDb = {
     return sortByOrder(list)
   },
   getByFilter: async (filter: TaskFilterKey) => {
-    if (filter === 'all') {
-      const list = await db.tasks.toArray()
-      return sortByOrder(list)
-    }
-
     if (filter === 'active') {
+      const todayKey = toDateKey(new Date())
       const list = await db.tasks
         .filter((task) => {
           if (task.completed) return false
           if (!task.dueDate) return true
-          return isToday(task.dueDate)
+          const dueKey = normalizeDateKey(task.dueDate)
+          return !!dueKey && dueKey <= todayKey
         })
         .toArray()
       return sortByOrder(list)
@@ -38,7 +35,7 @@ export const taskDb = {
     }
 
     if (filter === 'upcoming') {
-      const todayKey = normalizeDateKey(new Date().toISOString())
+      const todayKey = toDateKey(new Date())
       const list = await db.tasks
         .filter((task) => {
           if (!task.dueDate) return false
@@ -50,10 +47,13 @@ export const taskDb = {
       return sortByOrder(list)
     }
 
-    const completed = filter === 'completed'
-    const list = await db.tasks.filter((task) => task.completed === completed).toArray()
+    if (filter === 'completed') {
+      const list = await db.tasks.filter((task) => task.completed).toArray()
+      return sortByOrder(list)
+    }
 
-    return sortByOrder(list)
+    const _exhaustiveCheck: never = filter
+    throw new Error(`Unhandled filter: ${_exhaustiveCheck}`)
   },
   searchByTitle: async (query: string) => {
     const trimmed = query.trim()
@@ -66,6 +66,13 @@ export const taskDb = {
     return sortByOrder(list)
   },
   add: (task: Task) => db.tasks.add(task),
+  createWithMinOrder: (task: Task) =>
+    db.transaction('rw', db.tasks, async () => {
+      const first = await db.tasks.orderBy('order').limit(1).toArray()
+      const minOrder = first[0]?.order
+      const order = (minOrder ?? 0) - 1
+      await db.tasks.add({ ...task, order })
+    }),
   update: (id: string, update: Partial<Task>) => db.tasks.update(id, update),
   remove: (id: string) => db.tasks.delete(id),
   clear: () => db.tasks.clear(),
@@ -73,7 +80,6 @@ export const taskDb = {
     const list = await db.tasks.orderBy('order').limit(1).toArray()
     return list[0]?.order
   },
-  updateOrder: (id: string, order: number) => db.tasks.update(id, { order }),
   bulkUpdateOrder: (updates: { id: string; order: number }[]) =>
     db.transaction('rw', db.tasks, async () => {
       await Promise.all(updates.map((update) => db.tasks.update(update.id, { order: update.order })))

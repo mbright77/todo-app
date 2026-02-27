@@ -44,6 +44,40 @@ describe('useTaskStore', () => {
     expect(updated.completed).toBe(true)
   })
 
+  it('deletes tasks through the store', async () => {
+    const store = useTaskStore.getState()
+    await store.createTask({ title: 'To delete' })
+
+    const [task] = await taskDb.getAll()
+    await store.deleteTask(task.id)
+
+    const tasks = await taskDb.getAll()
+    expect(tasks).toHaveLength(0)
+  })
+
+  it('sets the active filter', () => {
+    const store = useTaskStore.getState()
+    store.setFilter({ key: 'completed', label: 'Completed' })
+    expect(useTaskStore.getState().filter.key).toBe('completed')
+    // restore default
+    store.setFilter({ key: 'active', label: 'Active' })
+  })
+
+  it('updates updatedAt on updateTask', async () => {
+    const store = useTaskStore.getState()
+    await store.createTask({ title: 'Timestamped' })
+
+    const [task] = await taskDb.getAll()
+    const before = task.updatedAt
+
+    // Ensure at least 1 ms passes
+    await new Promise((resolve) => setTimeout(resolve, 10))
+    await store.updateTask(task.id, { title: 'Timestamped v2' })
+
+    const [updated] = await taskDb.getAll()
+    expect(updated.updatedAt > before).toBe(true)
+  })
+
   it('reorders tasks', async () => {
     await taskDb.add({
       id: 'a',

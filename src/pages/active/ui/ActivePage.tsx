@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { ReorderableTaskList } from '../../../features/reorder-tasks/ui/ReorderableTaskList'
-import { IconButton, Typography, Box, Paper } from '@mui/material'
+import { Typography, Box, Paper } from '@mui/material'
+import { IconButton } from '../../../shared/ui/IconButton'
 import FilterListIcon from '@mui/icons-material/FilterList'
-import { TaskFilters } from '../../../features/search-tasks/ui/TaskFilters'
+import { FilterTasksDialog } from '../../../features/filter-tasks/ui/FilterTasksDialog'
 
 export function ActivePage() {
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false)
@@ -23,7 +24,7 @@ export function ActivePage() {
         </IconButton>
       </Box>
 
-      {isFilterModalOpen && <TaskFilters onClose={() => setIsFilterModalOpen(false)} />}
+      {isFilterModalOpen && <FilterTasksDialog onClose={() => setIsFilterModalOpen(false)} />}
 
       <Paper variant="outlined" sx={{ p: { xs: 2, sm: 3 }, borderRadius: 4 }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>

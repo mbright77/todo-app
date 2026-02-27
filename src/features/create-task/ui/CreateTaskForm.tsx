@@ -60,7 +60,7 @@ export function CreateTaskForm({
             variant="contained"
             startIcon={<AddIcon />}
             onClick={() => setIsExpanded(true)}
-            aria-expanded="false"
+            aria-expanded={isExpanded}
             aria-controls="create-task-form"
           >
             Add New Task

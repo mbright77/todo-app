@@ -1,4 +1,8 @@
-export const toIsoDate = (date: Date) => date.toISOString()
+/** An ISO 8601 datetime string as returned by `Date.prototype.toISOString()`. */
+export type IsoDateString = string & { readonly __brand: 'IsoDateString' }
+
+export const toIsoDateTime = (date: Date): IsoDateString =>
+  date.toISOString() as IsoDateString
 
 export const toDateKey = (date: Date) => {
   const year = date.getFullYear()
@@ -23,7 +27,7 @@ export const isToday = (value: string) => {
 
 export const formatDate = (value: string) => {
   const dateKey = normalizeDateKey(value)
-  if (!dateKey) return value
+  if (!dateKey) return ''
   const [year, month, day] = dateKey.split('-')
   return `${day}/${month}/${year}`
 }

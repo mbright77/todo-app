@@ -37,7 +37,7 @@ export const theme = createTheme({
         },
         text: {
           primary: '#E6E1E5',
-          secondary: '#938F99',
+          secondary: '#AEA9B4',
         },
         background: {
           default: '#1C1B1F',
@@ -100,7 +100,11 @@ export const theme = createTheme({
             backgroundImage: 'none',
             borderRadius: 16,
             ...(elevation > 0 && {
-              backgroundColor: `color-mix(in srgb, ${theme.vars.palette.background.paper}, ${theme.vars.palette.primary.main} ${opacity})`,
+              backgroundColor: theme.vars.palette.background.paper,
+              // Progressive enhancement: override with color-mix if supported
+              '@supports (background-color: color-mix(in srgb, white, white))': {
+                backgroundColor: `color-mix(in srgb, ${theme.vars.palette.background.paper}, ${theme.vars.palette.primary.main} ${opacity})`,
+              },
             }),
           }
         },
@@ -118,7 +122,7 @@ export const theme = createTheme({
     MuiCard: {
       styleOverrides: {
         root: {
-          borderRadius: 16,
+          borderRadius: 12,
           boxShadow: 'none',
           border: '1px solid',
           borderColor: 'var(--mui-palette-divider)',

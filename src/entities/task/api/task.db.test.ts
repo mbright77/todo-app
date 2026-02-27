@@ -85,6 +85,21 @@ describe('taskDb', () => {
     expect(upcomingTasks[0].title).toBe('Upcoming task')
   })
 
+  it('includes overdue incomplete tasks in active filter', async () => {
+    const yesterday = new Date()
+    yesterday.setDate(yesterday.getDate() - 1)
+
+    await taskDb.add(buildTask({ title: 'Overdue task', dueDate: toDateKey(yesterday), order: 0 }))
+    await taskDb.add(buildTask({ title: 'No due date', order: 1 }))
+    await taskDb.add(buildTask({ title: 'Done overdue', completed: true, dueDate: toDateKey(yesterday), order: 2 }))
+
+    const activeTasks = await taskDb.getByFilter('active')
+
+    expect(activeTasks.map((t) => t.title)).toContain('Overdue task')
+    expect(activeTasks.map((t) => t.title)).toContain('No due date')
+    expect(activeTasks.map((t) => t.title)).not.toContain('Done overdue')
+  })
+
   it('excludes completed tasks from active and today', async () => {
     const today = new Date()
     const todayKey = toDateKey(today)
@@ -122,5 +137,71 @@ describe('taskDb', () => {
     const results = await taskDb.searchByTitle('doc')
     expect(results).toHaveLength(1)
     expect(results[0].title).toBe('Write docs')
+  })
+
+  it('searchByTitle is case-insensitive', async () => {
+    await taskDb.add(buildTask({ title: 'Write Docs', order: 0 }))
+
+    const lower = await taskDb.searchByTitle('write docs')
+    const upper = await taskDb.searchByTitle('WRITE DOCS')
+    const mixed = await taskDb.searchByTitle('wRiTe DoCs')
+
+    expect(lower).toHaveLength(1)
+    expect(upper).toHaveLength(1)
+    expect(mixed).toHaveLength(1)
+  })
+
+  it('searchByTitle returns empty array for blank query', async () => {
+    await taskDb.add(buildTask({ title: 'Something', order: 0 }))
+    const results = await taskDb.searchByTitle('   ')
+    expect(results).toHaveLength(0)
+  })
+
+  it('removes a task', async () => {
+    const task = buildTask({ title: 'Removable', order: 0 })
+    await taskDb.add(task)
+    await taskDb.remove(task.id)
+
+    const tasks = await taskDb.getAll()
+    expect(tasks).toHaveLength(0)
+  })
+
+  it('updates a task field', async () => {
+    const task = buildTask({ title: 'Original', order: 0 })
+    await taskDb.add(task)
+    await taskDb.update(task.id, { title: 'Updated' })
+
+    const tasks = await taskDb.getAll()
+    expect(tasks[0].title).toBe('Updated')
+  })
+
+  it('bulkUpdateOrder updates multiple tasks at once', async () => {
+    const a = buildTask({ id: 'ord-a', order: 0 })
+    const b = buildTask({ id: 'ord-b', order: 1 })
+    await taskDb.add(a)
+    await taskDb.add(b)
+
+    await taskDb.bulkUpdateOrder([
+      { id: 'ord-a', order: 10 },
+      { id: 'ord-b', order: 5 },
+    ])
+
+    const tasks = await taskDb.getAll()
+    // sorted by order: b(5) then a(10)
+    expect(tasks.map((t) => t.id)).toEqual(['ord-b', 'ord-a'])
+  })
+
+  it('getMinOrder returns undefined on an empty table', async () => {
+    const minOrder = await taskDb.getMinOrder()
+    expect(minOrder).toBeUndefined()
+  })
+
+  it('getMinOrder returns the lowest order value', async () => {
+    await taskDb.add(buildTask({ order: 5 }))
+    await taskDb.add(buildTask({ order: -3 }))
+    await taskDb.add(buildTask({ order: 0 }))
+
+    const minOrder = await taskDb.getMinOrder()
+    expect(minOrder).toBe(-3)
   })
 })

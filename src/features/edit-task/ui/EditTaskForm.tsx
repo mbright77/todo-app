@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { Task } from '../../../entities/task/model/types'
 import { useTaskStore } from '../../../entities/task/model/store'
 import { TextField, Box } from '@mui/material'
+import { VISUALLY_HIDDEN_SX } from '../../../shared/ui/sx'
 
 type EditTaskFormProps = {
   task: Task
@@ -13,26 +14,42 @@ export function EditTaskForm({ task }: EditTaskFormProps) {
   const [dueDate, setDueDate] = useState(task.dueDate ?? '')
   const updateTask = useTaskStore((state) => state.updateTask)
 
-  const onBlur = async () => {
-    const trimmedTitle = title.trim()
-    if (!trimmedTitle) {
-      setTitle(task.title)
-      setDescription(task.description ?? '')
-      setDueDate(task.dueDate ?? '')
-      return
-    }
+  // Track which field (if any) is currently focused so we don't reset it.
+  const focusedFieldRef = useRef<'title' | 'description' | 'dueDate' | null>(null)
 
-    if (
-      trimmedTitle !== task.title ||
-      description !== (task.description ?? '') ||
-      dueDate !== (task.dueDate ?? '')
-    ) {
-      await updateTask(task.id, {
-        title: trimmedTitle,
-        description: description.trim() || null,
-        dueDate: dueDate.trim() || null,
-      })
-    }
+  // 6.10 — reset local state when a different task is shown in this slot.
+  useEffect(() => {
+    if (focusedFieldRef.current !== 'title') setTitle(task.title)
+    if (focusedFieldRef.current !== 'description') setDescription(task.description ?? '')
+    if (focusedFieldRef.current !== 'dueDate') setDueDate(task.dueDate ?? '')
+  }, [task.id]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // 6.9 — coalesce rapid onBlur saves (e.g. title → description focus shift).
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const scheduleSave = (latestTitle: string, latestDescription: string, latestDueDate: string) => {
+    if (saveTimerRef.current !== null) clearTimeout(saveTimerRef.current)
+    saveTimerRef.current = setTimeout(async () => {
+      saveTimerRef.current = null
+      const trimmedTitle = latestTitle.trim()
+      if (!trimmedTitle) {
+        setTitle(task.title)
+        setDescription(task.description ?? '')
+        setDueDate(task.dueDate ?? '')
+        return
+      }
+      if (
+        trimmedTitle !== task.title ||
+        latestDescription !== (task.description ?? '') ||
+        latestDueDate !== (task.dueDate ?? '')
+      ) {
+        await updateTask(task.id, {
+          title: trimmedTitle,
+          description: latestDescription.trim() || null,
+          dueDate: latestDueDate.trim() || null,
+        })
+      }
+    }, 50)
   }
 
   return (
@@ -43,7 +60,11 @@ export function EditTaskForm({ task }: EditTaskFormProps) {
         fullWidth
         value={title}
         onChange={(event) => setTitle(event.target.value)}
-        onBlur={onBlur}
+        onFocus={() => { focusedFieldRef.current = 'title' }}
+        onBlur={() => {
+          focusedFieldRef.current = null
+          scheduleSave(title, description, dueDate)
+        }}
         placeholder="Task title"
         slotProps={{
           input: {
@@ -52,7 +73,7 @@ export function EditTaskForm({ task }: EditTaskFormProps) {
           },
           inputLabel: {
             shrink: true,
-            sx: { clipPath: 'inset(50%)', height: 1, overflow: 'hidden', position: 'absolute', whiteSpace: 'nowrap', width: 1 }
+            sx: VISUALLY_HIDDEN_SX,
           }
         }}
       />
@@ -63,7 +84,11 @@ export function EditTaskForm({ task }: EditTaskFormProps) {
         multiline
         value={description}
         onChange={(event) => setDescription(event.target.value)}
-        onBlur={onBlur}
+        onFocus={() => { focusedFieldRef.current = 'description' }}
+        onBlur={() => {
+          focusedFieldRef.current = null
+          scheduleSave(title, description, dueDate)
+        }}
         placeholder="Add details"
         slotProps={{
           input: {
@@ -72,7 +97,7 @@ export function EditTaskForm({ task }: EditTaskFormProps) {
           },
           inputLabel: {
             shrink: true,
-            sx: { clipPath: 'inset(50%)', height: 1, overflow: 'hidden', position: 'absolute', whiteSpace: 'nowrap', width: 1 }
+            sx: VISUALLY_HIDDEN_SX,
           }
         }}
       />
@@ -82,14 +107,18 @@ export function EditTaskForm({ task }: EditTaskFormProps) {
         variant="standard"
         value={dueDate}
         onChange={(event) => setDueDate(event.target.value)}
-        onBlur={onBlur}
+        onFocus={() => { focusedFieldRef.current = 'dueDate' }}
+        onBlur={() => {
+          focusedFieldRef.current = null
+          scheduleSave(title, description, dueDate)
+        }}
         slotProps={{
           input: {
             sx: { fontSize: '0.75rem', color: 'text.secondary' }
           },
           inputLabel: {
             shrink: true,
-            sx: { clipPath: 'inset(50%)', height: 1, overflow: 'hidden', position: 'absolute', whiteSpace: 'nowrap', width: 1 }
+            sx: VISUALLY_HIDDEN_SX,
           }
         }}
       />

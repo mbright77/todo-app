@@ -1,16 +1,11 @@
 import { create } from 'zustand'
 import type { Task, TaskFilter } from './types'
 import { taskDb } from '../api/task.db'
-import { createId } from '../../../shared/lib/id'
-import { toIsoDate } from '../../../shared/lib/date'
+import { toIsoDateTime } from '../../../shared/lib/date'
+import { TASK_FILTERS } from '../../../shared/config/constants'
+import { buildTask } from './task.factory'
 
-const FILTERS: TaskFilter[] = [
-  { key: 'active', label: 'Active' },
-  { key: 'today', label: 'Today' },
-  { key: 'upcoming', label: 'Upcoming' },
-  { key: 'completed', label: 'Completed' },
-  { key: 'all', label: 'All tasks' },
-]
+const FILTERS: TaskFilter[] = TASK_FILTERS
 
 type TaskState = {
   filter: TaskFilter
@@ -23,38 +18,19 @@ type TaskState = {
   reorderTasks: (updates: { id: string; order: number }[]) => Promise<void>
 }
 
-const buildTask = (
-  input: { title: string; description?: string; dueDate?: string },
-  order: number
-): Task => {
-  const now = toIsoDate(new Date())
-  return {
-    id: createId(),
-    title: input.title.trim(),
-    description: input.description?.trim() ?? null,
-    completed: false,
-    dueDate: input.dueDate ?? null,
-    order,
-    createdAt: now,
-    updatedAt: now,
-  }
-}
-
 export const useTaskStore = create<TaskState>((set) => ({
   filter: FILTERS[0],
   filters: FILTERS,
   setFilter: (filter) => set({ filter }),
   createTask: async (input) => {
-    const minOrder = await taskDb.getMinOrder()
-    const order = (minOrder ?? 0) - 1
-    const task = buildTask(input, order)
-    await taskDb.add(task)
+    const task = buildTask(input, 0) // order will be set inside the transaction
+    await taskDb.createWithMinOrder(task)
   },
   updateTask: async (id, update) => {
-    await taskDb.update(id, { ...update, updatedAt: toIsoDate(new Date()) })
+    await taskDb.update(id, { ...update, updatedAt: toIsoDateTime(new Date()) })
   },
   toggleTask: async (id, completed) => {
-    await taskDb.update(id, { completed, updatedAt: toIsoDate(new Date()) })
+    await taskDb.update(id, { completed, updatedAt: toIsoDateTime(new Date()) })
   },
   deleteTask: async (id) => {
     await taskDb.remove(id)

@@ -2,9 +2,10 @@ import { useMemo, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { taskDb } from '../../../entities/task/api/task.db'
 import { TaskList } from '../../../entities/task/ui/TaskList'
-import { Typography, Box, Paper, Chip, TextField, IconButton, InputAdornment } from '@mui/material'
+import { Typography, Box, Paper, TextField, InputAdornment } from '@mui/material'
 import ClearIcon from '@mui/icons-material/Clear'
 import SearchIcon from '@mui/icons-material/Search'
+import { IconButton } from '../../../shared/ui/IconButton'
 import { TaskCard } from '../../../entities/task/ui/TaskCard'
 import { CompleteCheckbox } from '../../../features/complete-task/ui/CompleteCheckbox'
 import { EditTaskForm } from '../../../features/edit-task/ui/EditTaskForm'
@@ -14,7 +15,7 @@ export function SearchPage() {
   const [query, setQuery] = useState('')
   const trimmedQuery = query.trim()
   const results = useLiveQuery(() => taskDb.searchByTitle(trimmedQuery), [trimmedQuery])
-  
+
   const totalLabel = useMemo(() => {
     if (!results) return 'Searching'
     if (!trimmedQuery) return 'Type to search'
@@ -33,13 +34,18 @@ export function SearchPage() {
             Find Tasks
           </Typography>
         </Box>
-        <Chip label={totalLabel} variant="outlined" color="info" />
+        <Box role="status" aria-live="polite" aria-atomic="true">
+          <Typography variant="body2" color="text.secondary">
+            {totalLabel}
+          </Typography>
+        </Box>
       </Box>
 
       <Paper variant="outlined" sx={{ p: { xs: 2, sm: 3 }, borderRadius: 4 }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
           <TextField
             fullWidth
+            label="Search tasks"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search tasks by title"
@@ -52,7 +58,11 @@ export function SearchPage() {
                 ),
                 endAdornment: trimmedQuery ? (
                   <InputAdornment position="end">
-                    <IconButton onClick={() => setQuery('')} edge="end">
+                    <IconButton
+                      onClick={() => setQuery('')}
+                      edge="end"
+                      aria-label="Clear search"
+                    >
                       <ClearIcon />
                     </IconButton>
                   </InputAdornment>

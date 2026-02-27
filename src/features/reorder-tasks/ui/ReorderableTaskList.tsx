@@ -4,6 +4,7 @@ import { taskDb } from '../../../entities/task/api/task.db'
 import { TaskCard } from '../../../entities/task/ui/TaskCard'
 import { TaskList } from '../../../entities/task/ui/TaskList'
 import { useTaskStore } from '../../../entities/task/model/store'
+import { buildOrderUpdates } from '../../../entities/task/model/order'
 import type { Task, TaskFilterKey } from '../../../entities/task/model/types'
 import { CompleteCheckbox } from '../../complete-task/ui/CompleteCheckbox'
 import { EditTaskForm } from '../../edit-task/ui/EditTaskForm'
@@ -21,7 +22,6 @@ import {
 } from '@dnd-kit/core'
 import {
   SortableContext,
-  arrayMove,
   useSortable,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
@@ -30,39 +30,6 @@ import { CSS } from '@dnd-kit/utilities'
 type ReorderableTaskListProps = {
   filterKey?: TaskFilterKey
   emptyMessage?: string
-}
-
-const REINDEX_GAP_THRESHOLD = 0.0001
-
-const buildOrderUpdates = (sortedTasks: Task[], activeId: string, overId: string) => {
-  const oldIndex = sortedTasks.findIndex((task) => task.id === activeId)
-  const newIndex = sortedTasks.findIndex((task) => task.id === overId)
-
-  if (oldIndex === -1 || newIndex === -1 || oldIndex === newIndex) return []
-
-  const reordered = arrayMove(sortedTasks, oldIndex, newIndex)
-  const movedTask = reordered[newIndex]
-  const prevTask = reordered[newIndex - 1]
-  const nextTask = reordered[newIndex + 1]
-
-  if (!prevTask && !nextTask) return []
-
-  const gap = prevTask && nextTask ? nextTask.order - prevTask.order : undefined
-
-  if (gap !== undefined && gap < REINDEX_GAP_THRESHOLD) {
-    return reordered.map((task, index) => ({ id: task.id, order: index }))
-  }
-
-  let order = movedTask.order
-  if (!prevTask && nextTask) {
-    order = nextTask.order - 1
-  } else if (prevTask && !nextTask) {
-    order = prevTask.order + 1
-  } else if (prevTask && nextTask) {
-    order = (prevTask.order + nextTask.order) / 2
-  }
-
-  return [{ id: movedTask.id, order }]
 }
 
 type SortableTaskItemProps = { task: Task; isActiveDrag?: boolean } & CollapseProps
@@ -151,7 +118,11 @@ export function ReorderableTaskList({ filterKey, emptyMessage }: ReorderableTask
     if (!over || active.id === over.id) return
 
     const updates = buildOrderUpdates(tasks ?? [], String(active.id), String(over.id))
-    await reorderTasks(updates)
+    try {
+      await reorderTasks(updates)
+    } catch (error) {
+      console.error('Failed to reorder tasks:', error)
+    }
   }
 
   const onDragCancel = () => {

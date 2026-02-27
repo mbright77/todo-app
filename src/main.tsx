@@ -6,7 +6,7 @@ import CssBaseline from '@mui/material/CssBaseline'
 import { theme } from './app/theme'
 import { router } from './app/router'
 import './app/global.css'
-import { registerSW } from 'virtual:pwa-register'
+import { initSW } from './app/lib/sw'
 import { ErrorBoundary } from './shared/ui/ErrorBoundary'
 
 import '@fontsource/roboto/300.css'
@@ -31,11 +31,4 @@ createRoot(rootElement).render(
   </StrictMode>
 )
 
-const updateSW = registerSW({
-  immediate: true,
-  onNeedRefresh() {
-    updateSW(true)
-  },
-})
-
-updateSW()
+initSW()
